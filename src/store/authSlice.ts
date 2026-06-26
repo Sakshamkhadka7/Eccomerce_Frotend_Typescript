@@ -9,6 +9,11 @@ interface IUser {
   password: string | null;
 }
 
+interface ILogin {
+  email: string;
+  password: string;
+}
+
 interface IAuthState {
   user: IUser;
   status: Status;
@@ -58,4 +63,85 @@ function registerUser(data: IUser) {
       dispatch(setStatus(Status.ERROR));
     }
   };
+}
+
+function loginUser(data: ILogin) {
+  return async function loginUserThunk(dispatch: AppDispatch) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/login",
+        data,
+      );
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at login user", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+function forgetPassword(data: { email: string }) {
+  return async function forgetPasswordThunk(dispatch: AppDispatch) {
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/forgot_password",
+        data,
+      );
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at forgot user", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+function verifyOtp(data:{email:string,otp:number}){
+  return async function verifyOtpThunk(dispatch:AppDispatch){
+       try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/verify_otp",
+        data,
+      );
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at verify otp user", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  }
+}
+
+
+function resetPassword(data:{newPassword:string,confirmPassword:string}){
+  return async function resetPasswordThunk(dispatch:AppDispatch){
+        try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/resetPassword",
+        data,
+      );
+      console.log(response);
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at reset password user", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  }
 }
