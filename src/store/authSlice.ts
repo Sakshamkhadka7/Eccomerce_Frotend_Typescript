@@ -7,6 +7,7 @@ interface IUser {
   username: string | null;
   email: string | null;
   password: string | null;
+  token: string | null;
 }
 
 interface ILogin {
@@ -21,9 +22,10 @@ interface IAuthState {
 
 const initialState: IAuthState = {
   user: {
-    username: "saksham",
-    email: "projectmanage1212@gmail.com",
-    password: "1111",
+    username: null,
+    email: null,
+    password: null,
+    token: null,
   },
   status: Status.LOADING,
 };
@@ -38,10 +40,13 @@ const authSlice = createSlice({
     setStatus(state: IAuthState, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    setToken(state: IAuthState, action: PayloadAction<string>) {
+      state.user.token = action.payload;
+    },
   },
 });
 
-export const { setUser, setStatus } = authSlice.actions;
+export const { setUser, setStatus, setToken } = authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -55,7 +60,7 @@ export function registerUser(data: IUser) {
       console.log(response);
       if (response.status === 201) {
         dispatch(setStatus(Status.SUCCESS));
-        dispatch(setUser(response.data.data))
+        dispatch(setUser(response.data.data));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -76,6 +81,13 @@ export function loginUser(data: ILogin) {
       console.log(response);
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
+
+        if (response.data.token) {
+          localStorage.setItem("token", response.data.token);
+          dispatch(setToken(response.data.token));
+        } else {
+          dispatch(setStatus(Status.ERROR));
+        }
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -106,9 +118,9 @@ export function forgetPassword(data: { email: string }) {
   };
 }
 
-export function verifyOtp(data:{email:string,otp:number}){
-  return async function verifyOtpThunk(dispatch:AppDispatch){
-       try {
+export function verifyOtp(data: { email: string; otp: number }) {
+  return async function verifyOtpThunk(dispatch: AppDispatch) {
+    try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/verify_otp",
         data,
@@ -123,13 +135,15 @@ export function verifyOtp(data:{email:string,otp:number}){
       console.log("Error occured at verify otp user", error);
       dispatch(setStatus(Status.ERROR));
     }
-  }
+  };
 }
 
-
-export function resetPassword(data:{newPassword:string,confirmPassword:string}){
-  return async function resetPasswordThunk(dispatch:AppDispatch){
-        try {
+export function resetPassword(data: {
+  newPassword: string;
+  confirmPassword: string;
+}) {
+  return async function resetPasswordThunk(dispatch: AppDispatch) {
+    try {
       const response = await axios.post(
         "http://localhost:3000/api/auth/resetPassword",
         data,
@@ -144,5 +158,5 @@ export function resetPassword(data:{newPassword:string,confirmPassword:string}){
       console.log("Error occured at reset password user", error);
       dispatch(setStatus(Status.ERROR));
     }
-  }
+  };
 }

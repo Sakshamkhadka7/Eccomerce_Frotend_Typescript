@@ -1,12 +1,15 @@
-import { useState, type ChangeEvent, type FormEvent } from "react"
-import { useAppDispatch } from "../../store/hook"
+import { use, useState, type ChangeEvent, type FormEvent } from "react"
+import { useAppDispatch, useAppSelector } from "../../store/hook"
 import { loginUser } from "../../store/authSlice"
+import { Link } from "react-router-dom"
 
 const Login = () => {
    
     const dispatch=useAppDispatch()
+    const {status,user}=useAppSelector((store)=> store.auth);
 
-    const [user,setUser]=useState({
+
+    const [users,setUser]=useState({
         email:"",
         password:""
     })
@@ -22,8 +25,8 @@ const Login = () => {
 
     const handleSubmit=(e:FormEvent<HTMLFormElement>)=>{
         e.preventDefault();
-        console.log(user);
-        dispatch(loginUser(user))
+        console.log(users);
+        dispatch(loginUser(users))
     }
 
 
@@ -33,6 +36,7 @@ const Login = () => {
         <form onSubmit={handleSubmit} className="min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-900  rounded-xl shadow-lg">
             <div className="flex flex-col justify-center items-center h-full select-none">
                 <div className="flex flex-col items-center justify-center gap-2 mb-8">
+                    <h1>Sign in {user?.username}</h1>
                    
                     <p className="m-0 text-[16px] font-semibold dark:text-white">Login to your Account</p>
                     <span className="m-0 text-xs max-w-[90%] text-center text-[#8B8E98]">Get started with our app, just start section and enjoy experience.
@@ -52,6 +56,8 @@ const Login = () => {
             <div className="mt-5">
                 <button className="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none">Login</button>
             </div>
+             <p className="text-blue-500">Wanna Login ? <Link to="/register">Go to Register</Link> </p>
+
         </form>
     </div>
 </div>

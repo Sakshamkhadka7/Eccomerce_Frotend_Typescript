@@ -2,7 +2,7 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { registerUser } from "../../store/authSlice";
 import { Status } from "../../globals/types/type";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Register = () => {
  
@@ -119,6 +119,9 @@ const Register = () => {
                 Register Account
               </button>
             </div>
+             <p className="text-blue-500">Wanna Login ? <Link to="/login">Go to Login</Link> </p>
+            
+
           </form>
         </div>
       </div>
