@@ -9,12 +9,10 @@ function Navbar() {
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    console.log(reduxToken, localStorageToken);
     if (reduxToken && localStorageToken) {
       setIsLoggedIn(true);
     }
   }, []);
-  console.log(isLoggedIn);
 
   return (
     <header className="sticky top-0 bg-white shadow">
