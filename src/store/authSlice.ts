@@ -45,16 +45,17 @@ export const { setUser, setStatus } = authSlice.actions;
 
 export default authSlice.reducer;
 
-function registerUser(data: IUser) {
+export function registerUser(data: IUser) {
   return async function registerUserThunk(dispatch: AppDispatch) {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/register",
+        "http://localhost:3000/api/auth/register",
         data,
       );
       console.log(response);
-      if (response.status === 200) {
+      if (response.status === 201) {
         dispatch(setStatus(Status.SUCCESS));
+        dispatch(setUser(response.data.data))
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -65,11 +66,11 @@ function registerUser(data: IUser) {
   };
 }
 
-function loginUser(data: ILogin) {
+export function loginUser(data: ILogin) {
   return async function loginUserThunk(dispatch: AppDispatch) {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/login",
+        "http://localhost:3000/api/auth/login",
         data,
       );
       console.log(response);
@@ -85,11 +86,11 @@ function loginUser(data: ILogin) {
   };
 }
 
-function forgetPassword(data: { email: string }) {
+export function forgetPassword(data: { email: string }) {
   return async function forgetPasswordThunk(dispatch: AppDispatch) {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/forgot_password",
+        "http://localhost:3000/api/auth/forgot_password",
         data,
       );
       console.log(response);
@@ -105,11 +106,11 @@ function forgetPassword(data: { email: string }) {
   };
 }
 
-function verifyOtp(data:{email:string,otp:number}){
+export function verifyOtp(data:{email:string,otp:number}){
   return async function verifyOtpThunk(dispatch:AppDispatch){
        try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/verify_otp",
+        "http://localhost:3000/api/auth/verify_otp",
         data,
       );
       console.log(response);
@@ -126,11 +127,11 @@ function verifyOtp(data:{email:string,otp:number}){
 }
 
 
-function resetPassword(data:{newPassword:string,confirmPassword:string}){
+export function resetPassword(data:{newPassword:string,confirmPassword:string}){
   return async function resetPasswordThunk(dispatch:AppDispatch){
         try {
       const response = await axios.post(
-        "http://localhost:8000/api/auth/resetPassword",
+        "http://localhost:3000/api/auth/resetPassword",
         data,
       );
       console.log(response);
