@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { IProduct, IProducts } from "../pages/product/types/productType";
 import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
+import axios from "axios";
 
 const initialState: IProducts = {
   products: [],
@@ -24,15 +25,21 @@ const productSlice = createSlice({
 export const { setProducts, setStatus } = productSlice.actions;
 export default productSlice.reducer;
 
-
-function fetchProduct(data){
-    return async function fetchProductThunk(dispatch:AppDispatch)
+function fetchProduct() {
+  return async function fetchProductThunk(dispatch: AppDispatch) {
     try {
-         
-            const response=await axu
-
+      const response = await axios.get(
+        "http://localhost:3000/api/product/getProduct",
+      );
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setProducts(response.data.data));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
     } catch (error) {
-        console.log("Error occured at fetchdProducts",error);
-        setStatus(Status.ERROR)
+      console.log("Error occured at fetchdProducts", error);
+      setStatus(Status.ERROR);
     }
+  };
 }
