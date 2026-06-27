@@ -2,12 +2,13 @@ import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { singleFetchProduct } from "../../store/productSlice";
 import { useParams } from "react-router-dom";
+import { addToCart } from "../../store/cartSlice";
 
 const SingleProduct = () => {
   const { id } = useParams();
-  const product=useAppSelector((store)=> store.products.product);
-  
-  console.log("Product",product);
+  const product = useAppSelector((store) => store.products.product);
+
+  console.log("Product", product);
 
   const dispatch = useAppDispatch();
 
@@ -16,6 +17,12 @@ const SingleProduct = () => {
       dispatch(singleFetchProduct(id));
     }
   }, []);
+
+  const handleAddToCart = () => {
+    if (id) {
+      dispatch(addToCart(id));
+    }
+  };
 
   return (
     <div className="bg-gray-100 dark:bg-gray-800 py-8">
@@ -31,7 +38,10 @@ const SingleProduct = () => {
             </div>
             <div className="flex -mx-2 mb-4">
               <div className="w-1/2 px-2">
-                <button className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700">
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
+                >
                   Add to Cart
                 </button>
               </div>
@@ -47,7 +57,7 @@ const SingleProduct = () => {
               {product?.productName}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
-           {product?.productDescriptions}
+              {product?.productDescriptions}
             </p>
             <div className="flex mb-4">
               <div className="mr-4">
@@ -67,17 +77,16 @@ const SingleProduct = () => {
             </div>
             <div className="mb-4">
               <span className="font-bold text-gray-700 dark:text-gray-300">
-              Category : {product?.Category.categoryName}
+                Category : {product?.Category.categoryName}
               </span>
-             
             </div>
-           
+
             <div>
               <span className="font-bold text-gray-700 dark:text-gray-300">
                 Product Description:
               </span>
               <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-              {product?.productDescriptions}
+                {product?.productDescriptions}
               </p>
             </div>
           </div>

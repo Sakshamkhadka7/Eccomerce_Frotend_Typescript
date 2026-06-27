@@ -35,7 +35,7 @@ export function addToCart(productId: string) {
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
         dispatch(setItem(response.data.data));
-      } else {
+      } else {  
         dispatch(setStatus(Status.ERROR));
       }
     } catch (error) {
@@ -49,6 +49,7 @@ export function fetchMyCarts(){
     return async function fetchMyCartsThunk(dispatch:AppDispatch){
         try {
             const response=await APIWITHTOKEN.get("/cart/getcart");
+            console.log(response);
             if(response.status ===200){
               dispatch(setItem(response.data.data))
             }else{

@@ -1,16 +1,20 @@
 import { Link } from "react-router-dom";
-import { useAppSelector } from "../../store/hook";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { useEffect, useState } from "react";
+import { fetchMyCarts } from "../../store/cartSlice";
 
 function Navbar() {
   const reduxToken = useAppSelector((store) => store.auth.user.token);
   const localStorageToken = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { items } = useAppSelector((store) => store.carts);
+  const dispatch=useAppDispatch()
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    if (reduxToken || localStorageToken) {
-      setIsLoggedIn(true);
+    if (localStorageToken || reduxToken) {
+      setIsLoggedIn(true)
+       dispatch(fetchMyCarts())
     }
   }, []);
 
@@ -48,7 +52,11 @@ function Navbar() {
         <div className="hidden md:block">
           {isLoggedIn ? (
             <>
-              <span className="mr-[10px]"><Link to="/my-cart">Cart <sup>1</sup></Link></span>
+              <span className="mr-[10px]">
+                <Link to="/my-cart">
+                  Cart <sup>{items.length > 0 ? items.length : 0}</sup>
+                </Link>
+              </span>
               <Link to="/logout">
                 <button
                   type="button"
