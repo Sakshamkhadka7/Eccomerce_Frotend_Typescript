@@ -34,10 +34,18 @@ const cartSlice = createSlice({
         state.items[index].quantity = action.payload.quantity;
       }
     },
+    setDeleteCartItem(state:ICartInitalState,action:PayloadAction<string>){
+      const index=state.items.findIndex((item)=> item.Product.productId == action.payload)
+      if(index !== -1){
+        state.items.splice(index,1);
+      }
+    }
+
+
   },
 });
 
-export const { setItem, setStatus, setUpdateCartItem } = cartSlice.actions;
+export const { setItem, setStatus, setUpdateCartItem , setDeleteCartItem} = cartSlice.actions;
 export default cartSlice.reducer;
 
 export function addToCart(productId: string) {
@@ -86,6 +94,23 @@ export function handleCartUpdate(productId: string, quantity: number) {
 
       if (response.status === 200) {
         dispatch(setUpdateCartItem({ productId, quantity }));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("error occured at handleCartUpdate", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
+
+export function handleCartDelete(productId: string) {
+  return async function handleCartDeleteThunk(dispatch: AppDispatch) {
+    try {
+      const response = await APIWITHTOKEN.delete(`/cart/deletecart/${productId}`);
+
+      if (response.status === 200) {
+        dispatch(setDeleteCartItem(productId));
       } else {
         dispatch(setStatus(Status.ERROR));
       }

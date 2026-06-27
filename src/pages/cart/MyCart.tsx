@@ -1,4 +1,4 @@
-import { handleCartUpdate } from "../../store/cartSlice";
+import { handleCartDelete, handleCartUpdate } from "../../store/cartSlice";
 import { useAppDispatch, useAppSelector } from "../../store/hook"
 
 const MyCart = () => {
@@ -11,6 +11,14 @@ const MyCart = () => {
       dispatch(handleCartUpdate(productId,quantity))
     }
 
+    const handleDelete=(productId:string)=>{
+        dispatch(handleCartDelete(productId))
+    }
+
+    const subTotal=items.reduce((sub,item)=> item.Product.productPrice * item.quantity + sub,0);
+    const totalQuantity=items.reduce((total,item)=> item.quantity + total,0);
+    const shipping=100
+   
 
   return (
    <div className="bg-gray-100 h-screen py-8">
@@ -47,6 +55,11 @@ const MyCart = () => {
                   </div>
                 </td>
                 <td className="py-4">{item.Product.productPrice * item.quantity}</td>
+                <td className="py-4">
+                  <div className="flex items-center">
+                    <button onClick={()=> handleDelete(item.Product.productId)} className="border rounded-md py-2 px-4 ml-2 bg-red-500 hover:bg-red-700">X</button>
+                  </div>
+                </td>
               </tr>
                 )
              })}
@@ -59,20 +72,20 @@ const MyCart = () => {
           <h2 className="text-lg font-semibold mb-4">Summary</h2>
           <div className="flex justify-between mb-2">
             <span>Subtotal</span>
-            <span>$19.99</span>
+            <span>{subTotal}</span>
           </div>
           <div className="flex justify-between mb-2">
-            <span>Taxes</span>
-            <span>$1.99</span>
+            <span>Total Quantity</span>
+            <span>{totalQuantity}</span>
           </div>
           <div className="flex justify-between mb-2">
             <span>Shipping</span>
-            <span>$0.00</span>
+            <span>$100.00</span>
           </div>
           <hr className="my-2" />
           <div className="flex justify-between mb-2">
             <span className="font-semibold">Total</span>
-            <span className="font-semibold">$21.98</span>
+            <span className="font-semibold">{shipping + subTotal}</span>
           </div>
           <button className="bg-blue-500 text-white py-2 px-4 rounded-lg mt-4 w-full">Checkout</button>
         </div>
