@@ -7,6 +7,7 @@ import axios from "axios";
 const initialState: IProducts = {
   products: [],
   status: Status.LOADING,
+  product:null
 };
 
 const productSlice = createSlice({
@@ -19,21 +20,47 @@ const productSlice = createSlice({
     setStatus(state: IProducts, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    setProduct(state:IProducts,action:PayloadAction<IProduct>){
+      state.product=action.payload
+    }
   },
 });
 
-export const { setProducts, setStatus } = productSlice.actions;
+export const { setProducts, setStatus ,setProduct } = productSlice.actions;
 export default productSlice.reducer;
 
-function fetchProduct() {
+export function fetchProduct() {
   return async function fetchProductThunk(dispatch: AppDispatch) {
     try {
       const response = await axios.get(
         "http://localhost:3000/api/product/getProduct",
       );
+
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
         dispatch(setProducts(response.data.data));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at fetchdProducts", error);
+      setStatus(Status.ERROR);
+    }
+  };
+}
+
+export function singleFetchProduct(id:string) {
+  return async function singleFetchProductThunk(dispatch: AppDispatch) {
+    try {
+      const response = await axios.get(
+        `http://localhost:3000/api/product/getSingleProduct/${id}`,
+      );
+      console.log(response);
+      console.log("Response",response.data.data[0]);
+
+      if (response.status === 200) {
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setProduct(response.data.data[0]));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
