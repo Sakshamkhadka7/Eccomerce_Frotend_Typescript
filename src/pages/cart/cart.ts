@@ -1,5 +1,11 @@
 import type { Status } from "../../globals/types/type";
 
+
+export interface IUpdateCart{
+  productId:string,
+  quantity:number
+}
+
 export interface IProductCart{
    productId:string,
   productImage:string,
@@ -11,7 +17,7 @@ export interface IProductCart{
 export interface ICartItems {
  cartId:string,
  productId:string,
- quantity:string,
+ quantity:number,
  Product:IProductCart
 }
 

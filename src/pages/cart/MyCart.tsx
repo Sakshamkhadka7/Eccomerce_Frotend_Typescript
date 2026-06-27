@@ -1,9 +1,15 @@
-import { useAppSelector } from "../../store/hook"
+import { handleCartUpdate } from "../../store/cartSlice";
+import { useAppDispatch, useAppSelector } from "../../store/hook"
 
 const MyCart = () => {
 
     const {items}=useAppSelector((store)=> store.carts);
     console.log(items);
+
+    const dispatch=useAppDispatch();
+    const handleChange=(productId:string,quantity:number)=>{
+      dispatch(handleCartUpdate(productId,quantity))
+    }
 
 
   return (
@@ -29,18 +35,18 @@ const MyCart = () => {
                 <td className="py-4">
                   <div className="flex items-center">
                     <img className="h-16 w-16 mr-4" src={`http://localhost:3000/${item.Product.productImage}`} alt="Product image" />
-                    <span className="font-semibold">{item?.Product?.productName} name</span>
+                    <span className="font-semibold">{item.Product.productName} name</span>
                   </div>
                 </td>
                 <td className="py-4">{item.Product.productPrice}</td>
                 <td className="py-4">
                   <div className="flex items-center">
-                    <button className="border rounded-md py-2 px-4 mr-2">-</button>
+                    <button onClick={()=> handleChange(item.Product.productId,item.quantity - 1)} className="border rounded-md py-2 px-4 mr-2">-</button>
                     <span className="text-center w-8">{item.quantity}</span>
-                    <button className="border rounded-md py-2 px-4 ml-2">+</button>
+                    <button onClick={()=> handleChange(item.Product.productId,item.quantity + 1)} className="border rounded-md py-2 px-4 ml-2">+</button>
                   </div>
                 </td>
-                <td className="py-4">{item.Product.productPrice}</td>
+                <td className="py-4">{item.Product.productPrice * item.quantity}</td>
               </tr>
                 )
              })}
