@@ -9,7 +9,7 @@ function Navbar() {
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    if (reduxToken && localStorageToken) {
+    if (reduxToken || localStorageToken) {
       setIsLoggedIn(true);
     }
   }, []);
@@ -47,14 +47,17 @@ function Navbar() {
 
         <div className="hidden md:block">
           {isLoggedIn ? (
-            <Link to="/logout">
-              <button
-                type="button"
-                className="mr-5 py-3 px-8 text-sm bg-teal-500 hover:bg-teal-600 rounded text-white "
-              >
-                Logout
-              </button>
-            </Link>
+            <>
+              <span className="mr-[10px]"><Link to="/my-cart">Cart <sup>1</sup></Link></span>
+              <Link to="/logout">
+                <button
+                  type="button"
+                  className="mr-5 py-3 px-8 text-sm bg-teal-500 hover:bg-teal-600 rounded text-white "
+                >
+                  Logout
+                </button>
+              </Link>
+            </>
           ) : (
             <>
               <Link to="/register">
