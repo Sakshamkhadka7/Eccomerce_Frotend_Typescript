@@ -6,6 +6,7 @@ import Home from './pages/home/Home'
 import Product from './pages/product/Product'
 import Navbar from './globals/components/Navbar'
 import SingleProduct from './pages/singleProduct/SingleProduct'
+import MyCart from './pages/cart/MyCart'
 
 const App = () => {
   return (
@@ -18,6 +19,7 @@ const App = () => {
       <Route path='/login' element={<Login/>} />
       <Route path='/products' element={<Product/>} />
       <Route path='/products/:id' element={<SingleProduct/>} />
+      <Route path='/my-cart' element={<MyCart/>} />
     </Routes>
     </>
   )

@@ -1,9 +1,18 @@
 import type { Status } from "../../globals/types/type";
-import type { IProduct } from "../product/types/productType";
+
+export interface IProductCart{
+   productId:string,
+  productImage:string,
+  productName:string,
+  productPrice:number
+}
+
 
 export interface ICartItems {
-  product: IProduct;
-  quantity: number;
+ cartId:string,
+ productId:string,
+ quantity:string,
+ Product:IProductCart
 }
 
 export interface ICartInitalState {
