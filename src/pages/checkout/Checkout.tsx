@@ -3,6 +3,9 @@ import { useAppSelector } from "../../store/hook"
 const Checkout = () => {
  
     const {items}=useAppSelector((store)=> store.carts);
+    const subTotal=items.reduce((sub,item)=> item.Product.productPrice * item.quantity + sub,0);
+      const totalQuantity=items.reduce((total,item)=> item.quantity + total,0);
+    const shipping=100
 
 
   return (
@@ -48,15 +51,14 @@ const Checkout = () => {
           </form>
           <div>
             <ul className="text-slate-500 font-medium space-y-4">
-              <li className="flex flex-wrap gap-4 text-sm">Subtotal <span className="ml-auto text-slate-900 font-semibold">$102.00</span>
+              <li className="flex flex-wrap gap-4 text-sm">Subtotal <span className="ml-auto text-slate-900 font-semibold">{subTotal}</span>
               </li>
-              <li className="flex flex-wrap gap-4 text-sm">Shipping <span className="ml-auto text-slate-900 font-semibold">$6.00</span>
+              <li className="flex flex-wrap gap-4 text-sm">Shipping <span className="ml-auto text-slate-900 font-semibold">$100.00</span>
               </li>
-              <li className="flex flex-wrap gap-4 text-sm">Tax <span className="ml-auto text-slate-900 font-semibold">$5.00</span>
-              </li>
+
               <hr className="border-slate-300" />
               <li className="flex flex-wrap gap-4 text-sm font-semibold text-slate-900">
-                Total <span className="ml-auto">$113.00</span></li>
+                Total <span className="ml-auto">{shipping + subTotal}</span></li>
             </ul>
           </div>
         </div>
@@ -94,15 +96,11 @@ const Checkout = () => {
               <input type="text" id="address" name="address" placeholder="123 Main Street" required className="px-3 py-2.5 text-sm text-slate-900 rounded-md bg-white w-full outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600" />
             </div>
             <div>
-              <label htmlFor="city" className="mb-2 text-slate-900 font-medium text-sm inline-block">City</label>
-              <input type="text" id="city" name="city" placeholder="New York" required className="px-3 py-2.5 text-sm text-slate-900 rounded-md bg-white w-full outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600" />
-            </div>
-            <div>
               <label htmlFor="state" className="mb-2 text-slate-900 font-medium text-sm inline-block">State</label>
               <input type="text" id="state" name="state" placeholder="NY" required className="px-3 py-2.5 text-sm text-slate-900 rounded-md bg-white w-full outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600" />
             </div>
             <div>
-              <label htmlFor="postal-code" className="mb-2 text-slate-900 font-medium text-sm inline-block">Postal
+              <label htmlFor="postal-code" className="mb-2 text-slate-900 font-medium text-sm inline-block">Zip
                 code</label>
               <input type="text" id="postal-code" name="postal-code" placeholder={"10001"} required className="px-3 py-2.5 text-sm text-slate-900 rounded-md bg-white w-full outline-1 -outline-offset-1 outline-slate-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600" />
             </div>
