@@ -7,6 +7,7 @@ export interface IProduct {
 
 export interface IOrderItems extends IProduct {
   orderId: string;
+  khaltiUrl:string
 }
 
 export interface IOrder {
