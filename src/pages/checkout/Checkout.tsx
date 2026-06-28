@@ -1,10 +1,11 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { PaymentMethod, type IData } from "./type";
 import { orderItem } from "../../store/checkoutSlice";
 
 const Checkout = () => {
   const { items } = useAppSelector((store) => store.carts);
+  const {khaltiUrl}=useAppSelector((store)=> store.orders)
   const [payment, setPayment] = useState<PaymentMethod>(PaymentMethod.Cod);
   console.log(payment);
   const subTotal = items.reduce(
@@ -14,6 +15,8 @@ const Checkout = () => {
   const shipping = 100;
   const total = shipping + subTotal;
   const dispatch = useAppDispatch();
+  
+  
   const [data, setData] = useState<IData>({
     firstName: "",
     lastName: "",
@@ -26,6 +29,7 @@ const Checkout = () => {
     totalAmount: 0,
     zipcode: "",
   });
+  
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,10 +38,17 @@ const Checkout = () => {
       [name]: value,
     });
   };
+  
 
-  const handlePaymentMethod = (e: ChangeEvent<HTMLInputElement>) => {
-    setPayment(e.target.value as PaymentMethod);
+  const handlePaymentMethod = (paymentData:PaymentMethod) => {
+    setPayment(paymentData as PaymentMethod);
+    setData({
+      ...data,
+      paymentMethod:paymentData
+    })
   };
+
+  
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -58,7 +69,16 @@ const Checkout = () => {
     };
 
     dispatch(orderItem(finalData));
+
   };
+
+    useEffect(()=>{
+     if(khaltiUrl){
+      console.log("Khalti URL",khaltiUrl);
+      window.location.href=khaltiUrl
+      return
+     }
+    },[khaltiUrl])
 
   return (
     <main>
@@ -298,7 +318,7 @@ const Checkout = () => {
                         name="paymentMethod"
                         value="khalti"
                         id="card"
-                        onChange={handlePaymentMethod}
+                        onChange={(e)=> handlePaymentMethod(e.target.value as PaymentMethod)}
                         className="w-[18px] h-[18px] appearance-none rounded-full border border-slate-400 bg-white focus:outline-blue-500 checked:ring-2 checked:ring-inset checked:ring-white checked:bg-blue-600"
                   
                       />
@@ -325,7 +345,7 @@ const Checkout = () => {
                         type="radio"
                         name="paymentMethod"
                         value="esewa"
-                        onChange={handlePaymentMethod}
+                        onChange={(e)=> handlePaymentMethod(e.target.value as PaymentMethod)}
                         id="paypal"
                         className="w-[18px] h-[18px] appearance-none rounded-full border border-slate-400 bg-white focus:outline-blue-500 checked:ring-2 checked:ring-inset checked:ring-white checked:bg-blue-600"
                       />
@@ -353,7 +373,7 @@ const Checkout = () => {
                         type="radio"
                         name="paymentMethod"
                         value="cod"
-                        onChange={handlePaymentMethod}
+                        onChange={(e)=> handlePaymentMethod(e.target.value as PaymentMethod)}
                         id="paypal"
                         className="w-[18px] h-[18px] appearance-none rounded-full border border-slate-400 bg-white focus:outline-blue-500 checked:ring-2 checked:ring-inset checked:ring-white checked:bg-blue-600"
                         defaultChecked
@@ -402,7 +422,7 @@ const Checkout = () => {
               </span>
             </label>
             <div className="mt-8">
-            {payment===PaymentMethod.Khalti ? (
+            {payment===PaymentMethod.Khalti && 
                 <button
                 type="submit"
                 className="w-full px-3.5 py-2 text-white text-sm font-semibold rounded-md cursor-pointer bg-purple-600 hover:bg-blue-700 border border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -410,15 +430,27 @@ const Checkout = () => {
                 Pay With Khalti
                 {subTotal + shipping}
               </button>
-            ):(
+            }
+
+             {payment===PaymentMethod.Esewa && 
                 <button
                 type="submit"
                 className="w-full px-3.5 py-2 text-white text-sm font-semibold rounded-md cursor-pointer bg-green-600 hover:bg-blue-700 border border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
               >
-                Pay With esewa
+                Pay With Esewa
                 {subTotal + shipping}
               </button>
-            )}
+            }
+
+             {payment===PaymentMethod.Cod && 
+                <button
+                type="submit"
+                className="w-full px-3.5 py-2 text-white text-sm font-semibold rounded-md cursor-pointer bg-green-800 hover:bg-blue-700 border border-blue-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              >
+                Pay With COD
+                {subTotal + shipping}
+              </button>
+            }
             </div>
           </form>
         </section>

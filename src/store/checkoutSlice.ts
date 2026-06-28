@@ -10,7 +10,7 @@ const initialState: IOrder = {
   khaltiUrl:null
 };
 
-const orderSlice = createSlice({
+const checkoutSlice = createSlice({
   name: "orders",
   initialState,
   reducers: {
@@ -26,8 +26,8 @@ const orderSlice = createSlice({
   },
 });
 
-export default orderSlice.reducer;
-export const { setItems, setStatus ,setKhalitUrl } = orderSlice.actions;
+export default checkoutSlice.reducer;
+export const { setItems, setStatus ,setKhalitUrl } = checkoutSlice.actions;
 
 export function orderItem(data: IData) {
   return async function orderItemThunk(dispatch: AppDispatch) {
@@ -38,6 +38,7 @@ export function orderItem(data: IData) {
       if (response.status === 200) {
         dispatch(setItems(response.data.data));
         dispatch(setStatus(Status.SUCCESS))
+        console.log("Response url : ",response.data.url);
         if(response.data.url){
             dispatch(setKhalitUrl(response.data.url))
         }
