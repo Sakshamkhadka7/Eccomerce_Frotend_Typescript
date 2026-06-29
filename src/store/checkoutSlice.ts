@@ -68,3 +68,21 @@ export function fetchMyOrders(){
     }
   }
 }
+
+
+export function fetchMyOrdersDetails(id:string){
+  return async function fetchMyOrdersDetailsThunk(dispatch:AppDispatch){
+    try {
+      const response=await APIWITHTOKEN.get(`/order/getmyorderdetails/${id}`);
+      if(response.status===200){
+        dispatch(setItems(response.data.data))
+        dispatch(setStatus(Status.SUCCESS))
+      }else{
+        dispatch(setStatus(Status.ERROR))
+      }
+    } catch (error) {
+      console.log("Error occured at fetchMyOrder",error);
+      dispatch(setStatus(Status.ERROR))
+    }
+  }
+}

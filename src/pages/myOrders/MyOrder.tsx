@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { fetchMyOrders } from "../../store/checkoutSlice";
+import { Link } from "react-router-dom";
 
 const MyOrder = () => {
   const { items } = useAppSelector((store) => store.orders);
@@ -83,11 +84,14 @@ const MyOrder = () => {
             {filterItem.length > 0 &&
               filterItem.map((item) => {
                 return (
-                  <tr className="hover:bg-slate-50">
+                  <tr className="hover:bg-slate-50" key={item.orderId}>
                     <td className="p-4 border-b border-slate-200 py-5">
-                      <p className="block font-semibold text-sm text-slate-800">
+                        <Link to={`/my-orders/${item.orderId}`}>
+                         <p className="block font-semibold text-sm text-slate-800">
                         {item.orderId}
                       </p>
+                        </Link>
+                     
                     </td>
                     <td className="p-4 border-b border-slate-200 py-5">
                       <p className="block font-semibold text-sm text-slate-800">
