@@ -2,7 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import type { IData, IOrder, IOrderItems } from "../pages/checkout/type";
 import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
-import { APIWITHTOKEN } from "../http";
+import { API, APIWITHTOKEN } from "../http";
 
 const initialState: IOrder = {
   items: [],
@@ -50,4 +50,21 @@ export function orderItem(data: IData) {
       dispatch(setStatus(Status.ERROR));
     }
   };
+}
+
+export function fetchMyOrders(){
+  return async function fetchMyOrdersThunk(dispatch:AppDispatch){
+    try {
+      const response=await APIWITHTOKEN.get("/order/getmyorder");
+      if(response.status===200){
+        dispatch(setItems(response.data.data))
+        dispatch(setStatus(Status.SUCCESS))
+      }else{
+        dispatch(setStatus(Status.ERROR))
+      }
+    } catch (error) {
+      console.log("Error occured at fetchMyOrder",error);
+      dispatch(setStatus(Status.ERROR))
+    }
+  }
 }
