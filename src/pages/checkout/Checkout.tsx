@@ -61,6 +61,7 @@ const Checkout = () => {
             };
           })
         : [];
+        
 
     const finalData = {
       ...data,
