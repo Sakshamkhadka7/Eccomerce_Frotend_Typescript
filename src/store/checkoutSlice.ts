@@ -30,9 +30,10 @@ const checkoutSlice = createSlice({
       state.khaltiUrl = action.payload;
     },
     updateOrderStatusToCancel(state:IOrder,action:PayloadAction<{orderId:string}>){
+      
       const data=state.items.find((item)=> item.orderId === action.payload.orderId)
       if(data){
-        data.orderStaus=OrderStaus.Cancelled
+        data.Order.orderStaus=OrderStaus.Cancelled
       }
     }
   },
@@ -104,7 +105,7 @@ export function cancelOrder(id: string) {
     try {
       const response = await APIWITHTOKEN.patch(`/order/cancel-order/${id}`);
       if (response.status === 200) {
-        console.log("Response data :" ,response.data.data);
+        console.log("Response Cancel data :" ,response.data.data);
          dispatch(setStatus(Status.SUCCESS));
         dispatch(updateOrderStatusToCancel({orderId:id}))
       } else {

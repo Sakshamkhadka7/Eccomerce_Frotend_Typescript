@@ -13,7 +13,7 @@ const MyOrderDetail = () => {
     if (id) {
       dispatch(fetchMyOrdersDetails(id));
     }
-  }, [id, orderDetails]);
+  }, []);
 
   const cancelOrderByUser = () => {
     if (id) {
