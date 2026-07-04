@@ -10,6 +10,8 @@ import MyCart from './pages/cart/MyCart'
 import Checkout from './pages/checkout/Checkout'
 import MyOrder from './pages/myOrders/MyOrder'
 import MyOrderDetail from './pages/myOrders/MyOrderDetail'
+import IndexAdmin from './pages/admin/IndexAdmin'
+
 
 const App = () => {
   return (
@@ -26,6 +28,7 @@ const App = () => {
       <Route path='/my-orders' element={<MyOrder/>} />
       <Route path='/checkout' element={<Checkout/>} />
       <Route path='/my-orders/:id' element={<MyOrderDetail/>} />
+      <Route path='/admin' element={<IndexAdmin/>} />
     </Routes>
     </>
   )
