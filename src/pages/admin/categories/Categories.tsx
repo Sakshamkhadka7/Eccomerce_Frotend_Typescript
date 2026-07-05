@@ -1,19 +1,26 @@
 import { useEffect, useState } from "react";
 import IndexAdmin from "../IndexAdmin";
 import CategoryTable from "./components/CategoryTable";
-import axios from "axios";
+import { API } from "../../../http";
 
-interface ICategory {
-  cartId: string;
-  quantity: number;
+export interface ICategory {
+  categoryId: string;
+  categoryName: string;
 }
 
 const Categories = () => {
+
+
   const [categories, setCategories] = useState<ICategory[]>([]);
 
   const fetchCategories = async () => {
     try {
-      const response = await axios.get("http://localhost:3000/cart/getcart");
+      const response = await API.get(
+        "http://localhost:3000/api/category/getCategory",
+        {
+          method: "GET",
+        },
+      );
       if (response.status === 200) {
         setCategories(response.data.data);
       } else {
