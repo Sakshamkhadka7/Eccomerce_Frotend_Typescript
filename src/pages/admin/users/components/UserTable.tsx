@@ -1,7 +1,10 @@
+import { useState } from "react";
 import { deleteUser, type IUser } from "../../../../store/adminUserSlice";
 import { useAppDispatch } from "../../../../store/hook";
 
 const UserTable = ({ users }: { users: IUser[] }) => {
+
+    const [searchItem,setSearchItem]=useState<string>("");
  
     const dispatch=useAppDispatch();
 
@@ -11,6 +14,9 @@ const UserTable = ({ users }: { users: IUser[] }) => {
        }
     }
 
+    const filterUsers=users.filter((user)=> user.username.toLowerCase().includes(searchItem) || user.email.toLowerCase().includes(searchItem))
+
+
 
   return (
     <div>
@@ -18,6 +24,7 @@ const UserTable = ({ users }: { users: IUser[] }) => {
         <div className="flex justify-between items-center ">
           <div>
             <input
+            onChange={(e)=> setSearchItem(e.target.value)}
               className="mx-4  border rounded-md px-4 py-2"
               type="text"
               placeholder="Search"
@@ -44,8 +51,8 @@ const UserTable = ({ users }: { users: IUser[] }) => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {users.length > 0 &&
-              users.map((user) => {
+            {filterUsers.length > 0 &&
+              filterUsers.map((user) => {
                 return (
                   <tr key={user.userId}>
                     <td className="px-6 py-4 whitespace-nowrap">
