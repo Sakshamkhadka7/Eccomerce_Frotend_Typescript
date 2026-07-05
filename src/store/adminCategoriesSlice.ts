@@ -25,8 +25,14 @@ const categoriesSlice = createSlice({
     setItems(state: ICategorries, action: PayloadAction<ICategory[]>) {
       state.items = action.payload;
     },
+    addCategoryToItem(state: ICategorries, action: PayloadAction<ICategory>) {
+      state.items.push(action.payload);
+    },
     setStatus(state: ICategorries, action: PayloadAction<Status>) {
       state.status = action.payload;
+    },
+    setResetStatus(state:ICategorries){
+       state.status=Status.LOADING
     },
     setDeleteCategories(state: ICategorries, action: PayloadAction<string>) {
       const index = state.items.findIndex(
@@ -39,19 +45,21 @@ const categoriesSlice = createSlice({
   },
 });
 
-export const { setItems, setStatus, setDeleteCategories } =
+export const { setItems, setStatus, setDeleteCategories, addCategoryToItem ,setResetStatus} =
   categoriesSlice.actions;
 
 export default categoriesSlice.reducer;
 
-export function addCategories() {
+export function addCategories(categoryName: string) {
   return async function addCategoriesThunk(dispatch: AppDispatch) {
     try {
-      const response = await APIWITHTOKEN.post("/category/addCategory", {});
+      const response = await APIWITHTOKEN.post("/category/addCategory", {
+        categoryName,
+      });
 
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
-        dispatch(setItems(response.data.data));
+        dispatch(addCategoryToItem(response.data.data));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
