@@ -38,7 +38,7 @@ const CategoryTable = ({ categories }: { categories: ICategory[] }) => {
         {categories.length > 0 &&
           categories.map((item) => {
             return (
-              <tr>
+              <tr key={item.categoryId}>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {item?.categoryId}
                 </td>
