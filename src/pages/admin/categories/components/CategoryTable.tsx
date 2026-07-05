@@ -1,7 +1,7 @@
 import type { ICategory } from "../Categories";
 import { useAppDispatch } from "../../../../store/hook";
 import { handleCategoriesDelete } from "../../../../store/adminCategoriesSlice";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import Modal from "./Modal";
 
 const CategoryTable = ({ categories }: { categories: ICategory[] }) => {
@@ -16,8 +16,16 @@ const CategoryTable = ({ categories }: { categories: ICategory[] }) => {
     }
   };
 
-  const openModal=()=> setIsOpenModal(true);
-  const closeModal=()=> setIsOpenModal(false)
+  const openModal=()=> useCallback(()=> setIsOpenModal(true),[]) ;
+  const closeModal=()=> useCallback(()=> setIsOpenModal(false),[])
+
+  // const openModalRef=useRef<()=> void>(null)
+
+  // if(openModalRef.current){
+  //   console.log("Function new instance is created",openModalRef.current != openModal);
+  // }
+
+  // openModalRef.current=openModal  this is checking that openModal and closeModal is creating in every time when we search
 
   const filteredItem=categories.filter((category)=> category.categoryName.toLowerCase().includes(searchItem.toLowerCase()) || category.categoryId.includes(searchItem.toLowerCase()))
 

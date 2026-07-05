@@ -10,9 +10,10 @@ import MyCart from './pages/cart/MyCart'
 import Checkout from './pages/checkout/Checkout'
 import MyOrder from './pages/myOrders/MyOrder'
 import MyOrderDetail from './pages/myOrders/MyOrderDetail'
-import IndexAdmin from './pages/admin/IndexAdmin'
+// import IndexAdmin from './pages/admin/IndexAdmin'
 import Categories from './pages/admin/categories/Categories'
 import AdminStats from './pages/admin/stats/AdminStats'
+import User from './pages/admin/users/User'
 
 
 const App = () => {
@@ -32,6 +33,8 @@ const App = () => {
       <Route path='/my-orders/:id' element={<MyOrderDetail/>} />
       <Route path='/admin' element={<AdminStats/>} />
       <Route path='/admin/categories' element={<Categories/>} />
+      <Route path='/admin/users' element={<User/>} />
+
     </Routes>
     </>
   )
