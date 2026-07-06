@@ -10,7 +10,7 @@ interface ModalProps {
   closeModal: () => void;
 }
 
-export interface IProducts {
+export interface IAdminProducts {
   productId?: string;
   productName: string;
   productDescriptions: string;
@@ -24,7 +24,7 @@ export interface IProducts {
 const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   const [categoryName, setCategoryName] = useState<string>("");
 
-  const [data, setData] = useState<IProducts>({
+  const [data, setData] = useState<IAdminProducts>({
     productName: "",
     productDescriptions: "",
     productPrice: 0,
