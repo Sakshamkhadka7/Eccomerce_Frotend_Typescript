@@ -3,8 +3,8 @@ import { useAppDispatch, useAppSelector } from "../../../../store/hook";
 import { Status } from "../../../../globals/types/type";
 import {
   fetchCategories,
-  setResetStatus,
 } from "../../../../store/adminCategoriesSlice";
+import { addAdminProducts, setResetStatusProduct } from "../../../../store/adminProductSlice";
 
 interface ModalProps {
   closeModal: () => void;
@@ -17,24 +17,24 @@ export interface IAdminProducts {
   productPrice: number;
   productTotalStock: number;
   productDiscount: number;
-  categoryId:string,
+  categoryId: string;
   productImage: string;
 }
 
 const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
-  const [categoryName, setCategoryName] = useState<string>("");
-
   const [data, setData] = useState<IAdminProducts>({
     productName: "",
     productDescriptions: "",
     productPrice: 0,
     productTotalStock: 0,
     productDiscount: 0,
-     categoryId:"",
+    categoryId: "",
     productImage: "",
   });
 
-  const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement >) => {
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setData({
       ...data,
@@ -42,7 +42,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     });
   };
 
-  const { status } = useAppSelector((store) => store.categories);
+  const { status } = useAppSelector((store) => store.adminProducts);
 
   const dispatch = useAppDispatch();
   const [loading, setLoading] = useState(false);
@@ -54,6 +54,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
     setLoading(true);
 
     try {
+      dispatch(addAdminProducts(data));
     } catch (error) {
       console.log("Error occured at handle submit", error);
     }
@@ -66,8 +67,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
   useEffect(() => {
     if (status === Status.SUCCESS) {
       setLoading(false);
-      //   closeModal();
-      dispatch(setResetStatus());
+      closeModal();
+      dispatch(setResetStatusProduct());
     }
   }, [status]);
 
@@ -220,7 +221,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 Category
               </label>
               <select
-              onChange={handleChange}
+                onChange={handleChange}
                 name="categoryId"
                 id="product-category"
                 onClick={fetchCategoriesForProduct} // Handles the actual selection change
@@ -230,7 +231,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 {/* Good UX fallback option */}
                 {items.length > 0 &&
                   items.map((item) => (
-                    <option value={item.categoryId} key={item.categoryId} >
+                    <option value={item.categoryId} key={item.categoryId}>
                       {item.categoryName}
                     </option>
                   ))}

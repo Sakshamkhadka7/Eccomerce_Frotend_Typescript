@@ -37,10 +37,20 @@ const adminProductSlice = createSlice({
     setStatus(state: InitialStateProducts, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+  setResetStatusProduct(state: InitialStateProducts) {
+      state.status = Status.LOADING
+    },
+
+    setAdminProducts(
+      state: InitialStateProducts,
+      action: PayloadAction<IProducts>,
+    ) {
+      state.products.push(action.payload);
+    },
   },
 });
 
-export const { setProducts, setStatus } = adminProductSlice.actions;
+export const { setProducts, setStatus , setAdminProducts ,setResetStatusProduct } = adminProductSlice.actions;
 
 export default adminProductSlice.reducer;
 
@@ -49,7 +59,7 @@ export function fetchProducts() {
     try {
       const response = await APIWITHTOKEN.get("/product/getProduct");
       if (response.status === 200) {
-        dispatch(setStatus(Status.SUCCESS));
+        // dispatch(setStatus(Status.SUCCESS));
         dispatch(setProducts(response.data.data));
       }
     } catch (error) {
@@ -70,7 +80,7 @@ export function addAdminProducts(data: IAdminProducts) {
       });
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
-        dispatch(setProducts(response.data.data));
+        dispatch(setAdminProducts(response.data.data));
       }
     } catch (error) {
       dispatch(setStatus(Status.ERROR));

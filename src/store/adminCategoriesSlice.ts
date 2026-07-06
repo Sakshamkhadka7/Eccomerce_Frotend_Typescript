@@ -80,8 +80,8 @@ export function fetchCategories() {
         },
       );
       if (response.status === 200) {
-        dispatch(setStatus(Status.SUCCESS));
-        dispatch(setItems(response.data.data));
+        dispatch(setItems(response.data.data))
+        dispatch(setStatus(Status.SUCCESS));;
       } else {
         dispatch(setStatus(Status.ERROR));
       }
