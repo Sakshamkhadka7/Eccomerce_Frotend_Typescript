@@ -3,7 +3,7 @@ import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
 import { APIWITHTOKEN } from "../http";
 
-interface IProducts {
+export interface IProducts {
   productId: string;
   productName: string;
   productDescriptions: string;
