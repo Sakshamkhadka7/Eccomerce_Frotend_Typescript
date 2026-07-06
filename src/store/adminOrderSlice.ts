@@ -2,6 +2,7 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
 import { APIWITHTOKEN } from "../http";
+import type { IOrderDetails } from "../pages/myOrders/type";
 
 
 export interface IAdminOrder {
@@ -18,7 +19,7 @@ export interface IAdminOrder {
 interface IInitialState {
   items: IAdminOrder[];
   status: Status;
-  orderDetails: [];
+  orderDetails:IOrderDetails [];
 }
 
 const initialState: IInitialState = {
@@ -37,6 +38,9 @@ const adminOrderSlice = createSlice({
     setStatus(state: IInitialState, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
+    setOrderDetails(state:IInitialState,action:PayloadAction<IOrderDetails[]>){
+        state.orderDetails=action.payload
+    }
 //      updateOrderStatusToCancel(
 //        state: IOrder,
 //        action: PayloadAction<{ orderId: string }>,
@@ -55,6 +59,7 @@ export default adminOrderSlice.reducer;
 export const {
   setItems,
   setStatus,
+  setOrderDetails
 } = adminOrderSlice.actions;
 
 // export function orderItem(data: IData) {
@@ -97,23 +102,23 @@ export function fetchAllOrders() {
   };
 }
 
-// export function fetchMyOrdersDetails(id: string) {
-//   return async function fetchMyOrdersDetailsThunk(dispatch: AppDispatch) {
-//     try {
-//       const response = await APIWITHTOKEN.get(`/order/getmyorderdetails/${id}`);
-//       if (response.status === 200) {
-//         console.log("Response data :", response.data.data);
-//         dispatch(setStatus(Status.SUCCESS));
-//         dispatch(setOrderDetails(response.data.data));
-//       } else {
-//         dispatch(setStatus(Status.ERROR));
-//       }
-//     } catch (error) {
-//       console.log("Error occured at fetchMyOrder", error);
-//       dispatch(setStatus(Status.ERROR));
-//     }
-//   };
-// }
+export function fetchAllOrdersDetails(id: string) {
+  return async function fetchAllOrdersDetailsThunk(dispatch: AppDispatch) {
+    try {
+      const response = await APIWITHTOKEN.get(`/order/getmyorderdetails/${id}`);
+      if (response.status === 200) {
+        console.log("Response data :", response.data.data);
+        dispatch(setStatus(Status.SUCCESS));
+        dispatch(setOrderDetails(response.data.data));
+      } else {
+        dispatch(setStatus(Status.ERROR));
+      }
+    } catch (error) {
+      console.log("Error occured at fetchMyOrder", error);
+      dispatch(setStatus(Status.ERROR));
+    }
+  };
+}
 
 // export function cancelOrder(id: string) {
 //   return async function cancelOrderThunk(dispatch: AppDispatch) {

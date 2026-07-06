@@ -15,6 +15,9 @@ export interface IOrderDetails {
   Order: {
     totalAmount: number;
     addressLine: string;
+    firstName: string;
+    lastName: string;
+    userId: string;
     orderStaus: OrderStaus;
     phoneNumber: 1234567890;
     state: string;

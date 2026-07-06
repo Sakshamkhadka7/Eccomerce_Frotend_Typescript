@@ -35,12 +35,19 @@ const checkoutSlice = createSlice({
       if(data){
         data.Order.orderStaus=OrderStaus.Cancelled
       }
+    },
+    updateOrderStatusInSlice(state:IOrder,action:PayloadAction<{status:OrderStaus,userId:string,orderId:string}>){
+      const {status,orderId}=action.payload;
+     const updateOrder = state.items.map((order)=>
+        order.orderId === orderId ? {...order,orderStaus:status} : order
+      )
+      state.items=updateOrder
     }
   },
 });
 
 export default checkoutSlice.reducer;
-export const { setItems, setStatus, setKhalitUrl , setOrderDetails ,updateOrderStatusToCancel} = checkoutSlice.actions;
+export const { setItems, setStatus, setKhalitUrl , setOrderDetails ,updateOrderStatusToCancel,updateOrderStatusInSlice} = checkoutSlice.actions;
 
 export function orderItem(data: IData) {
   return async function orderItemThunk(dispatch: AppDispatch) {

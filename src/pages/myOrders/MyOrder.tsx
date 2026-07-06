@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { fetchMyOrders } from "../../store/checkoutSlice";
+import { fetchMyOrders, updateOrderStatusInSlice } from "../../store/checkoutSlice";
 import { Link } from "react-router-dom";
+import { socket } from "../../App";
 
 const MyOrder = () => {
   const { items } = useAppSelector((store) => store.orders);
@@ -17,6 +18,13 @@ const MyOrder = () => {
   useEffect(() => {
     dispatch(fetchMyOrders());
   }, []);
+
+  useEffect(()=>{
+  socket.on("statusUpdate",(data:any)=>{
+    console.log(data,"Incoming data");
+    dispatch(updateOrderStatusInSlice(data))
+  })
+  },[socket])
 
   return (
     <div>

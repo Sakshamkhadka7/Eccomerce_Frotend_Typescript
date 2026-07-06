@@ -8,7 +8,7 @@ const AdminOrderTable = ({orders}:{orders:IAdminOrder[]}) => {
 
    
     const dispatch=useAppDispatch()
-   const {products}=useAppSelector((store)=>store.adminProducts)
+//    const {products}=useAppSelector((store)=>store.adminOrders)
 
     useEffect(()=>{
       dispatch(fetchProducts())
@@ -32,50 +32,40 @@ const AdminOrderTable = ({orders}:{orders:IAdminOrder[]}) => {
           <thead>
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Product Id
+                Order Id
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Product Name
+                Total Amount
               </th>
              
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-              productDescriptions
+              Order Status
               </th>
 
                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-           productPrice
+              Order Quantity
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-           productTotalStock
+               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+              Payment Method
               </th>
 
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-           productDiscount
-              </th>
 
-              
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-           productImage
-              </th>
-              
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-           {products.length > 0 && products.map((product)=>{
+           {orders.length > 0 && orders.map((orders)=>{
             return (
-                 <tr key={product.productId}>
-                    <Link to={`/admin/products/${product.productId}`}> <td className="px-6 py-4 whitespace-nowrap">{product.productId}</td></Link>
-              <td className="px-6 py-4 whitespace-nowrap">{product.productName}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{product.productDescriptions}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{product.productPrice}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{product.productTotalStock}</td>
-              <td className="px-6 py-4 whitespace-nowrap">{product.productDiscount}</td>
-             
-              <td className="px-6 py-4 whitespace-nowrap"><img src={`http://localhost:3000/${product.productImage}`} /></td>
+                 <tr key={orders.orderId}>
+                    <Link to={`/admin/orders/${orders.orderId}`}> <td className="px-6 py-4 whitespace-nowrap">{orders.orderId}</td></Link>
+              <td className="px-6 py-4 whitespace-nowrap">{orders.totalAmount}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{orders.orderStaus}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{orders.quantity}</td>
+              <td className="px-6 py-4 whitespace-nowrap">{orders.Table.paymentMethod}</td>
+            
 
               <td className="px-6 py-4 whitespace-nowrap">
                 <button className="px-4 py-2 font-medium text-white bg-blue-600 rounded-md hover:bg-blue-500 focus:outline-none focus:shadow-outline-blue active:bg-blue-600 transition duration-150 ease-in-out">
