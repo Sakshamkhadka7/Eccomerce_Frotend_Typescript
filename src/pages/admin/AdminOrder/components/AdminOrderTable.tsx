@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/hook";
 import { fetchProducts } from "../../../../store/adminProductSlice";
-import ProductModal from "./ProductModal";
 import { Link } from "react-router-dom";
+import type { IAdminOrder } from "../../../../store/adminOrderSlice";
 
-const ProductTable = () => {
+const AdminOrderTable = ({orders}:{orders:IAdminOrder[]}) => {
 
-   const [isModalOpen,setIsModalOpen]=useState(false)
+   
     const dispatch=useAppDispatch()
    const {products}=useAppSelector((store)=>store.adminProducts)
 
@@ -14,13 +14,10 @@ const ProductTable = () => {
       dispatch(fetchProducts())
     },[])
 
-    const openModal=useCallback(()=> setIsModalOpen(true),[])
-    const closeModal=useCallback(()=> setIsModalOpen(false),[])
-
   return (
     <div>
       <div>
-        {isModalOpen && <ProductModal closeModal={closeModal} />}
+    
         <div className="flex justify-between items-center ">
           <div>
             <input
@@ -29,11 +26,7 @@ const ProductTable = () => {
               placeholder="Search"
             />
           </div>
-          <div className="flex items-center pr-4">
-            <button onClick={openModal} className="bg-blue-500 rounded text-white p-2">
-              + Add Product
-            </button>
-          </div>
+    
         </div>
         <table className="min-w-full divide-y divide-gray-200">
           <thead>
@@ -102,4 +95,4 @@ const ProductTable = () => {
   );
 };
 
-export default ProductTable;
+export default AdminOrderTable;

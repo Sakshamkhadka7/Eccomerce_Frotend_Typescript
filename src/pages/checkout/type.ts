@@ -14,7 +14,6 @@ export interface IProduct {
 
 export interface IOrderItems extends IProduct { 
   orderId: string;
-  
 }
 
 export interface IOrder {
