@@ -160,3 +160,21 @@ export function resetPassword(data: {
     }
   };
 }
+
+
+// export function getMe(){
+//   return async function getMeThunk(dispatch:AppDispatch){
+//     try {
+//       const response=await axios.get("http://localhost:3000/api/auth/getme",{
+//         method:"GET"
+//       })
+    
+//       if(response.status===200){
+
+//       }
+
+//     } catch (error) {
+//        console.log("Error occured at getMe",error);
+//     }
+//   }
+// }

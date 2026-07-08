@@ -19,6 +19,7 @@ import AdminOrder from "./pages/admin/AdminOrder/AdminOrder";
 import AdminOrderDetails from "./pages/admin/orderDetailsAdmin/AdminOrderDetails";
 
 import { io } from "socket.io-client";
+import ProtectedRoute from "./ProtectedRoute";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -41,19 +42,19 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Product />} />
         <Route path="/products/:id" element={<SingleProduct />} />
-        <Route path="/my-cart" element={<MyCart />} />
-        <Route path="/my-orders" element={<MyOrder />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/my-orders/:id" element={<MyOrderDetail />} />
+        <Route path="/my-cart" element={<ProtectedRoute><MyCart /></ProtectedRoute>} />
+        <Route path="/my-orders" element={<ProtectedRoute><MyOrder /></ProtectedRoute>} />
+        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+        <Route path="/my-orders/:id" element={<ProtectedRoute><MyOrderDetail /></ProtectedRoute>} />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<AdminStats />} />
-        <Route path="/admin/categories" element={<Categories />} />
-        <Route path="/admin/users" element={<User />} />
-        <Route path="/admin/products" element={<AdminProducts />} />
-        <Route path="/admin/products/:id" element={<ProductDescription />} />
-        <Route path="/admin/orders" element={<AdminOrder />} />
-        <Route path="/admin/orders/:id" element={<AdminOrderDetails />} />
+        <Route path="/admin" element={<ProtectedRoute><AdminStats /></ProtectedRoute>} />
+        <Route path="/admin/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+        <Route path="/admin/users" element={<ProtectedRoute><User /></ProtectedRoute>} />
+        <Route path="/admin/products" element={<ProtectedRoute><AdminProducts /></ProtectedRoute>} />
+        <Route path="/admin/products/:id" element={<ProtectedRoute><ProductDescription /></ProtectedRoute>} />
+        <Route path="/admin/orders" element={<ProtectedRoute><AdminOrder /></ProtectedRoute>} />
+        <Route path="/admin/orders/:id" element={<ProtectedRoute><AdminOrderDetails /></ProtectedRoute>} />
       </Routes>
     </>
   );

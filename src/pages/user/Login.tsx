@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { loginUser } from "../../store/authSlice";
 import { Link, useNavigate } from "react-router-dom";
@@ -29,10 +29,15 @@ const Login = () => {
     e.preventDefault();
     console.log(users);
     dispatch(loginUser(users));
-    if (status === Status.SUCCESS) {
+  
+  };
+  
+
+  useEffect(()=>{
+    if(status===Status.SUCCESS){
       navigate("/products");
     }
-  };
+  },[status])
 
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
