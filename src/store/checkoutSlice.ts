@@ -55,16 +55,23 @@ export function orderItem(data: IData) {
       const response = await APIWITHTOKEN.post("/order/createorder", {
         data,
       });
+
       if (response.status === 200) {
-        dispatch(setItems(response.data.data));
         dispatch(setStatus(Status.SUCCESS));
-        console.log("Response url : ", response.data.url);
+
         if (response.data.url) {
           dispatch(setKhalitUrl(response.data.url));
         }
+
+        // Fetch latest orders after creating one
+        dispatch(fetchMyOrders());
+
+        return response.data
+
       } else {
         dispatch(setStatus(Status.ERROR));
       }
+
     } catch (error) {
       console.log("Error occured at orderItem", error);
       dispatch(setStatus(Status.ERROR));

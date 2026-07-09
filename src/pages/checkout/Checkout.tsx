@@ -2,12 +2,12 @@ import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { PaymentMethod, type IData } from "./type";
 import { orderItem } from "../../store/checkoutSlice";
+import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
   const { items } = useAppSelector((store) => store.carts);
   const {khaltiUrl}=useAppSelector((store)=> store.orders)
   const [payment, setPayment] = useState<PaymentMethod>(PaymentMethod.Cod);
-  console.log(payment);
   const subTotal = items.reduce(
     (sub, item) => item.Product.productPrice * item.quantity + sub,
     0,
@@ -15,6 +15,7 @@ const Checkout = () => {
   const shipping = 100;
   const total = shipping + subTotal;
   const dispatch = useAppDispatch();
+  const navigate=useNavigate();
   
   
   const [data, setData] = useState<IData>({
@@ -50,7 +51,7 @@ const Checkout = () => {
 
   
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit =async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const productData =
       items.length > 0
@@ -69,7 +70,8 @@ const Checkout = () => {
       totalAmount: total,
     };
 
-    dispatch(orderItem(finalData));
+   const response=await dispatch(orderItem(finalData));
+    navigate("/my-orders")
 
   };
 
@@ -92,29 +94,29 @@ const Checkout = () => {
               {/* Product List */}
               <ul className="space-y-6">
                 {items.length > 0 ? (
-                  items.map((item) => {
+                  items?.map((item) => {
                     return (
-                      <li className="flex items-start gap-4" key={item.cartId}>
+                      <li className="flex items-start gap-4" key={item?.cartId}>
                         <div className="w-24 h-24 flex p-3 shrink-0 bg-white rounded-md">
                           <img
-                            src={`http://localhost:3000/${item.Product?.productImage}`}
+                            src={`http://localhost:3000/${item?.Product?.productImage}`}
                             className="w-full object-contain"
                             alt="black sweater"
                           />
                         </div>
                         <div className="w-full">
                           <h3 className="text-sm text-slate-900 font-semibold">
-                            {item.Product.productName}
+                            {item?.Product.productName}
                           </h3>
                           <ul className="text-sm text-slate-500 font-medium space-y-2 mt-2">
                             <li className="flex flex-wrap gap-4">
                               Quantity{" "}
-                              <span className="ml-auto">{item.quantity}</span>
+                              <span className="ml-auto">{item?.quantity}</span>
                             </li>
                             <li className="flex flex-wrap gap-4">
                               Price{" "}
                               <span className="ml-auto text-slate-900 font-semibold">
-                                {item.Product.productPrice}
+                                {item?.Product.productPrice}
                               </span>
                             </li>
                           </ul>

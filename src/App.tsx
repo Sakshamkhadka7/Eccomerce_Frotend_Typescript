@@ -20,6 +20,7 @@ import AdminOrderDetails from "./pages/admin/orderDetailsAdmin/AdminOrderDetails
 
 import { io } from "socket.io-client";
 import ProtectedRoute from "./ProtectedRoute";
+import VerifyKhaltipidx from "./pages/checkout/VerifyKhaltipidx";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -46,6 +47,7 @@ const App = () => {
         <Route path="/my-orders" element={<ProtectedRoute><MyOrder /></ProtectedRoute>} />
         <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
         <Route path="/my-orders/:id" element={<ProtectedRoute><MyOrderDetail /></ProtectedRoute>} />
+        <Route path="/payment-success" element={<ProtectedRoute><VerifyKhaltipidx/></ProtectedRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin" element={<ProtectedRoute><AdminStats /></ProtectedRoute>} />

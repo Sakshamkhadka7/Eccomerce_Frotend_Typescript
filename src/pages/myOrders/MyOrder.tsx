@@ -8,23 +8,37 @@ const MyOrder = () => {
   const { items } = useAppSelector((store) => store.orders);
   const dispatch = useAppDispatch();
   const [search,setSearch]=useState<string>("");
+  
 
-  const filterItem=items.filter((item)=>{
-   
-    return item.Table.paymentStatus.toLowerCase().includes(search) || item.orderStaus?.toLowerCase().includes(search) || item.Table.paymentMethod.toLowerCase().includes(search)
+useEffect(() => {
+  const handleStatusUpdate = (data: any) => {
+    dispatch(updateOrderStatusInSlice(data));
+  };
 
-  })
+  socket.on("statusUpdate", handleStatusUpdate);
 
-  useEffect(() => {
-    dispatch(fetchMyOrders());
-  }, []);
+  return () => {
+    socket.off("statusUpdate", handleStatusUpdate);
+  };
+}, [dispatch]);
 
-  useEffect(()=>{
-  socket.on("statusUpdate",(data:any)=>{
-    console.log(data,"Incoming data");
-    dispatch(updateOrderStatusInSlice(data))
-  })
-  },[socket])
+   const filterItem = Array.isArray(items)
+  ? items.filter((item) => {
+      return (
+        item?.Table?.paymentStatus
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+
+        item?.Table?.paymentMethod
+          ?.toLowerCase()
+          .includes(search.toLowerCase()) ||
+
+        item?.orderStaus
+          ?.toLowerCase()
+          .includes(search.toLowerCase())
+      );
+    })
+  : [];
 
   return (
     <div>
@@ -90,35 +104,35 @@ const MyOrder = () => {
           </thead>
           <tbody>
             {filterItem.length > 0 &&
-              filterItem.map((item) => {
+              filterItem?.map((item?) => {
                 return (
-                  <tr className="hover:bg-slate-50" key={item.orderId}>
+                  <tr className="hover:bg-slate-50" key={item?.orderId}>
                     <td className="p-4 border-b border-slate-200 py-5">
-                        <Link to={`/my-orders/${item.orderId}`}>
+                        <Link to={`/my-orders/${item?.orderId}`}>
                          <p className="block font-semibold text-sm text-slate-800">
-                        {item.orderId}
+                        {item?.orderId}
                       </p>
                         </Link>
                      
                     </td>
                     <td className="p-4 border-b border-slate-200 py-5">
                       <p className="block font-semibold text-sm text-slate-800">
-                        {item.orderStaus}
+                        {item?.orderStaus}
                       </p>
                     </td>
                     <td className="p-4 border-b border-slate-200 py-5">
                       <p className="text-sm text-slate-500">
-                        {item.totalAmount}
+                        {item?.totalAmount}
                       </p>
                     </td>
                     <td className="p-4 border-b border-slate-200 py-5">
                       <p className="text-sm text-slate-500">
-                        {item.Table.paymentMethod}
+                        {item?.Table?.paymentMethod}
                       </p>
                     </td>
                     <td className="p-4 border-b border-slate-200 py-5">
                       <p className="text-sm text-slate-500">
-                        {item.Table.paymentStatus}
+                        {item?.Table?.paymentStatus}
                       </p>
                     </td>
                   

@@ -13,7 +13,7 @@ function Navbar() {
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    if (  reduxToken) {
+    if (reduxToken) {
       setIsLoggedIn(true);
       dispatch(fetchMyCarts());
     }
