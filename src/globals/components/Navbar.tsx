@@ -5,7 +5,7 @@ import { fetchMyCarts } from "../../store/cartSlice";
 import { APIWITHTOKEN } from "../../http";
 
 function Navbar() {
-  const reduxToken = useAppSelector((store) => store.auth.user.token);
+  const reduxToken = useAppSelector((store) => store.auth.user);
   const localStorageToken = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { items } = useAppSelector((store) => store.carts);
@@ -13,11 +13,11 @@ function Navbar() {
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    if (localStorageToken || reduxToken) {
+    if (  reduxToken) {
       setIsLoggedIn(true);
       dispatch(fetchMyCarts());
     }
-  }, []);
+  }, [reduxToken]);
 
   const logout = async () => {
     try {
