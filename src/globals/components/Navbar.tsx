@@ -2,21 +2,38 @@ import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { useEffect, useState } from "react";
 import { fetchMyCarts } from "../../store/cartSlice";
+import { APIWITHTOKEN } from "../../http";
 
 function Navbar() {
   const reduxToken = useAppSelector((store) => store.auth.user.token);
   const localStorageToken = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { items } = useAppSelector((store) => store.carts);
-  const dispatch=useAppDispatch()
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
     if (localStorageToken || reduxToken) {
-      setIsLoggedIn(true)
-       dispatch(fetchMyCarts())
+      setIsLoggedIn(true);
+      dispatch(fetchMyCarts());
     }
   }, []);
+
+  const logout = async () => {
+    try {
+      const response = await APIWITHTOKEN.post("/auth/logout", {
+        method: "POST",
+      });
+
+      if (response.status === 200) {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+        alert("Logout successfully")
+      }
+    } catch (error) {
+      console.log("Error occured at logout", error);
+    }
+  };
 
   return (
     <header className="sticky top-0 bg-white shadow">
@@ -57,14 +74,15 @@ function Navbar() {
                   Cart <sup>{items.length > 0 ? items.length : 0}</sup>
                 </Link>
               </span>
-              <Link to="/logout">
+              
                 <button
+                 onClick={logout}
                   type="button"
                   className="mr-5 py-3 px-8 text-sm bg-teal-500 hover:bg-teal-600 rounded text-white "
                 >
                   Logout
                 </button>
-              </Link>
+
             </>
           ) : (
             <>
