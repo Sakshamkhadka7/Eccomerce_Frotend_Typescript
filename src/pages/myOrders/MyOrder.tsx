@@ -22,6 +22,10 @@ useEffect(() => {
   };
 }, [dispatch]);
 
+useEffect(() => {
+  dispatch(fetchMyOrders());
+}, [dispatch]);
+
    const filterItem = Array.isArray(items)
   ? items.filter((item) => {
       return (

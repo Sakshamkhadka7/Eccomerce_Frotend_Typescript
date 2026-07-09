@@ -4,6 +4,7 @@ import { Status } from "../globals/types/type";
 import type { AppDispatch } from "./store";
 import { APIWITHTOKEN } from "../http";
 import { OrderStaus, type IOrderDetails } from "../pages/myOrders/type";
+import { clearUserCart } from "./cartSlice";
 
 const initialState: IOrder = {
   items: [],
@@ -61,6 +62,8 @@ export function orderItem(data: IData) {
 
         if (response.data.url) {
           dispatch(setKhalitUrl(response.data.url));
+        }else{
+          dispatch(clearUserCart())
         }
 
         // Fetch latest orders after creating one

@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { APIWITHTOKEN } from "../../http";
+import { useAppDispatch } from "../../store/hook";
+import { fetchMyOrders } from "../../store/checkoutSlice";
 
 const VerifyKhaltipidx = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-
+ const dispatch=useAppDispatch();
   const pidx = searchParams.get("pidx");
 
   useEffect(() => {
@@ -19,7 +21,8 @@ const VerifyKhaltipidx = () => {
 
         if (response.status === 200) {
           alert("Payment verified successfully");
-          navigate("/my-orders");
+          await dispatch(fetchMyOrders());
+          navigate("/my-orders")
         }
       } catch (error) {
         console.log(error);

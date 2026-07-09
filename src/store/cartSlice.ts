@@ -39,13 +39,16 @@ const cartSlice = createSlice({
       if(index !== -1){
         state.items.splice(index,1);
       }
+    },
+    clearCart(state:ICartInitalState){
+      state.items=[]
     }
 
 
   },
 });
 
-export const { setItem, setStatus, setUpdateCartItem , setDeleteCartItem} = cartSlice.actions;
+export const { setItem, setStatus, setUpdateCartItem , setDeleteCartItem,clearCart} = cartSlice.actions;
 export default cartSlice.reducer;
 
 export function addToCart(productId: string) {
@@ -84,6 +87,21 @@ export function fetchMyCarts() {
       dispatch(setStatus(Status.ERROR));
     }
   };
+}
+
+export function clearUserCart() {
+    return async function clearUserCartThunk(dispatch: AppDispatch) {
+        try {
+            const response = await APIWITHTOKEN.delete("/cart/clear-cart");
+
+            if (response.status === 200) {
+                dispatch(clearCart());
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    };
 }
 
 export function handleCartUpdate(productId: string, quantity: number) {

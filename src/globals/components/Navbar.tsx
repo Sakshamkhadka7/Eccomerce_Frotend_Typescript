@@ -3,21 +3,23 @@ import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { useEffect, useState } from "react";
 import { fetchMyCarts } from "../../store/cartSlice";
 import { APIWITHTOKEN } from "../../http";
+import { userLogout } from "../../store/authSlice";
 
 function Navbar() {
-  const reduxToken = useAppSelector((store) => store.auth.user);
+  const reduxToken = useAppSelector((store) => store.auth.user.token);
   const localStorageToken = localStorage.getItem("token");
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const { items } = useAppSelector((store) => store.carts);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    //  setIsLoggedIn(!!localStorageToken || !! reduxToken)
-    if (reduxToken) {
-      setIsLoggedIn(true);
-      dispatch(fetchMyCarts());
-    }
-  }, [reduxToken]);
+  if (reduxToken || localStorageToken) {
+    setIsLoggedIn(true);
+    dispatch(fetchMyCarts());
+  } else {
+    setIsLoggedIn(false);
+  }
+}, [reduxToken, dispatch]);
 
   const logout = async () => {
     try {
@@ -27,8 +29,10 @@ function Navbar() {
 
       if (response.status === 200) {
         localStorage.removeItem("token");
+        dispatch(userLogout())
         window.location.href = "/login";
         alert("Logout successfully")
+        
       }
     } catch (error) {
       console.log("Error occured at logout", error);
