@@ -2,12 +2,14 @@ import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 import { Status } from "../globals/types/type";
 import axios from "axios";
 import type { AppDispatch } from "./store";
+import { APIWITHTOKEN } from "../http";
 
 interface IUser {
   username: string | null;
   email: string | null;
   password: string | null;
   token: string | null;
+  role: string | null;
 }
 
 interface ILogin {
@@ -26,6 +28,7 @@ const initialState: IAuthState = {
     email: null,
     password: null,
     token: null,
+    role: null,
   },
   status: Status.LOADING,
 };
@@ -40,21 +43,22 @@ const authSlice = createSlice({
     setStatus(state: IAuthState, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
-    setToken(state: IAuthState, action: PayloadAction<string>) {
-      state.user.token = action.payload;
+    setToken(state: IAuthState, action: PayloadAction<IUser>) {
+      state.user = action.payload;
     },
-    userLogout(state){
-      state.user={
-        username:null,
-        email:null,
-        password:null,
-        token:null
-      }
-    }
+    userLogout(state) {
+      state.user = {
+        username: null,
+        email: null,
+        password: null,
+        token: null,
+        role: null,
+      };
+    },
   },
 });
 
-export const { setUser, setStatus, setToken , userLogout } = authSlice.actions;
+export const { setUser, setStatus, setToken, userLogout } = authSlice.actions;
 
 export default authSlice.reducer;
 
@@ -86,13 +90,21 @@ export function loginUser(data: ILogin) {
         "http://localhost:3000/api/auth/login",
         data,
       );
-      console.log(response);
+      console.log(response.data.data, " : User loggined data");
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
 
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
-          dispatch(setToken(response.data.token));
+          dispatch(
+            setToken({
+              username: response.data.user.username,
+              email: response.data.user.email,
+              password: null,
+              token: response.data.token,
+              role: response.data.user.role,
+            }),
+          );
         } else {
           dispatch(setStatus(Status.ERROR));
         }
@@ -169,6 +181,27 @@ export function resetPassword(data: {
   };
 }
 
+export function getMe() {
+  return async function getMeThunk(dispatch: AppDispatch) {
+    try {
+      const response = await APIWITHTOKEN.get("/auth/getme");
+
+      if (response.status === 200) {
+        dispatch(
+          setUser({
+            username: response.data.data.username,
+            email: response.data.data.email,
+            password: null,
+            token: localStorage.getItem("token"),
+            role: response.data.data.role,
+          })
+        );
+      }
+    } catch (error) {
+      console.log("Error occurred at getMe", error);
+    }
+  };
+}
 
 // export function getMe(){
 //   return async function getMeThunk(dispatch:AppDispatch){
@@ -176,7 +209,7 @@ export function resetPassword(data: {
 //       const response=await axios.get("http://localhost:3000/api/auth/getme",{
 //         method:"GET"
 //       })
-    
+
 //       if(response.status===200){
 
 //       }

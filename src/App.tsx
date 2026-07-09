@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Register from "./pages/user/Register";
 import Login from "./pages/user/Login";
@@ -21,6 +21,9 @@ import AdminOrderDetails from "./pages/admin/orderDetailsAdmin/AdminOrderDetails
 import { io } from "socket.io-client";
 import ProtectedRoute from "./ProtectedRoute";
 import VerifyKhaltipidx from "./pages/checkout/VerifyKhaltipidx";
+import { useAppDispatch } from "./store/hook";
+import { getMe } from "./store/authSlice";
+import AdminRoute from "./AdminRoute";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -32,7 +35,15 @@ const App = () => {
   const location = useLocation();
 
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const dispatch = useAppDispatch();
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      dispatch(getMe());
+    }
+  }, [dispatch]);
   return (
     <>
       {!isAdminRoute && <Navbar />}
@@ -43,20 +54,104 @@ const App = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Product />} />
         <Route path="/products/:id" element={<SingleProduct />} />
-        <Route path="/my-cart" element={<ProtectedRoute><MyCart /></ProtectedRoute>} />
-        <Route path="/my-orders" element={<ProtectedRoute><MyOrder /></ProtectedRoute>} />
-        <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
-        <Route path="/my-orders/:id" element={<ProtectedRoute><MyOrderDetail /></ProtectedRoute>} />
-        <Route path="/payment-success" element={<ProtectedRoute><VerifyKhaltipidx/></ProtectedRoute>} />
+        <Route
+          path="/my-cart"
+          element={
+            <ProtectedRoute>
+              <MyCart />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-orders"
+          element={
+            <ProtectedRoute>
+              <MyOrder />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/my-orders/:id"
+          element={
+            <ProtectedRoute>
+              <MyOrderDetail />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment-success"
+          element={
+            <ProtectedRoute>
+              <VerifyKhaltipidx />
+            </ProtectedRoute>
+          }
+        />
 
         {/* Admin Routes */}
-        <Route path="/admin" element={<ProtectedRoute><AdminStats /></ProtectedRoute>} />
-        <Route path="/admin/categories" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
-        <Route path="/admin/users" element={<ProtectedRoute><User /></ProtectedRoute>} />
-        <Route path="/admin/products" element={<ProtectedRoute><AdminProducts /></ProtectedRoute>} />
-        <Route path="/admin/products/:id" element={<ProtectedRoute><ProductDescription /></ProtectedRoute>} />
-        <Route path="/admin/orders" element={<ProtectedRoute><AdminOrder /></ProtectedRoute>} />
-        <Route path="/admin/orders/:id" element={<ProtectedRoute><AdminOrderDetails /></ProtectedRoute>} />
+        <Route
+          path="/admin"
+          element={
+            <AdminRoute>
+              <AdminStats />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/categories"
+          element={
+            <AdminRoute>
+              <Categories />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <AdminRoute>
+              <User />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <AdminRoute>
+              <AdminProducts />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/products/:id"
+          element={
+            <AdminRoute>
+              <ProductDescription />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <AdminRoute>
+              <AdminOrder />
+            </AdminRoute>
+          }
+        />
+        <Route
+          path="/admin/orders/:id"
+          element={
+            <AdminRoute>
+              <AdminOrderDetails />
+            </AdminRoute>
+          }
+        />
       </Routes>
     </>
   );
