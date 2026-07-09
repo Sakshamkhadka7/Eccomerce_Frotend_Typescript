@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { APIWITHTOKEN } from "../../http";
 import { useAppDispatch } from "../../store/hook";
 import { fetchMyOrders } from "../../store/checkoutSlice";
+import { clearUserCart } from "../../store/cartSlice";
 
 const VerifyKhaltipidx = () => {
   const [searchParams] = useSearchParams();
@@ -22,6 +23,7 @@ const VerifyKhaltipidx = () => {
         if (response.status === 200) {
           alert("Payment verified successfully");
           await dispatch(fetchMyOrders());
+          await dispatch(clearUserCart())
           navigate("/my-orders")
         }
       } catch (error) {
