@@ -25,6 +25,7 @@ import { useAppDispatch } from "./store/hook";
 import { getMe, setStatus } from "./store/authSlice";
 import AdminRoute from "./AdminRoute";
 import { Status } from "./globals/types/type";
+import EditCategoryTable from "./pages/admin/categories/components/EditCategoryTable";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -152,6 +153,14 @@ const App = () => {
           element={
             <AdminRoute>
               <AdminOrderDetails />
+            </AdminRoute>
+          }
+        />
+          <Route
+          path="/admin/editcategories/:id"
+          element={
+            <AdminRoute>
+              <EditCategoryTable />
             </AdminRoute>
           }
         />

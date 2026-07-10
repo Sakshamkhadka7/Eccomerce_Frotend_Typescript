@@ -18,8 +18,8 @@ const initialState: ICategorries = {
   status: Status.LOADING,
 };
 
-interface IEditCategory{
-   categoryId?: string;
+export interface IEditCategory {
+  categoryId?: string;
   categoryName: string;
 }
 
@@ -36,8 +36,8 @@ const categoriesSlice = createSlice({
     setStatus(state: ICategorries, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
-    setResetStatus(state:ICategorries){
-       state.status=Status.LOADING
+    setResetStatus(state: ICategorries) {
+      state.status = Status.LOADING;
     },
     setDeleteCategories(state: ICategorries, action: PayloadAction<string>) {
       const index = state.items.findIndex(
@@ -47,11 +47,25 @@ const categoriesSlice = createSlice({
         state.items.splice(index, 1);
       }
     },
+    setUpdateCategory(state, action: PayloadAction<ICategory>) {
+      const index = state.items.findIndex(
+        (item) => item.categoryId === action.payload.categoryId,
+      );
+      if (index !== -1) {
+        state.items[index] = action.payload;
+      }
+    },
   },
 });
 
-export const { setItems, setStatus, setDeleteCategories, addCategoryToItem ,setResetStatus} =
-  categoriesSlice.actions;
+export const {
+  setItems,
+  setStatus,
+  setDeleteCategories,
+  addCategoryToItem,
+  setResetStatus,
+  setUpdateCategory,
+} = categoriesSlice.actions;
 
 export default categoriesSlice.reducer;
 
@@ -85,8 +99,8 @@ export function fetchCategories() {
         },
       );
       if (response.status === 200) {
-        dispatch(setItems(response.data.data))
-        dispatch(setStatus(Status.SUCCESS));;
+        dispatch(setItems(response.data.data));
+        dispatch(setStatus(Status.SUCCESS));
       } else {
         dispatch(setStatus(Status.ERROR));
       }
@@ -98,7 +112,6 @@ export function fetchCategories() {
 }
 
 export function handleCategoriesDelete(productId: string) {
-  
   return async function handleCategoriesThunk(dispatch: AppDispatch) {
     try {
       const response = await APIWITHTOKEN.delete(
@@ -117,13 +130,19 @@ export function handleCategoriesDelete(productId: string) {
   };
 }
 
-export function editCategories(id:string,data){
-  return async function editCategoriesThunk(dispatch : AppDispatch){
+export function editCategories(id: string, data: IEditCategory) {
+  return async function (dispatch: AppDispatch) {
     try {
-       
-      const response=await APIWITHTOKEN.put(`/category/updateCategory/${id}`,data)
+      const response = await APIWITHTOKEN.put(
+        `/category/updateCategory/${id}`,
+        data,
+      );
+
+      if (response.status === 200) {
+        dispatch(setUpdateCategory(response.data.data));
+      }
     } catch (error) {
-       console.log("Error occured at a=edit categories", error);
+      console.log(error);
     }
-  }
+  };
 }

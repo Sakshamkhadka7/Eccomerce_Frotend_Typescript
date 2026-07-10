@@ -55,11 +55,20 @@ const adminProductSlice = createSlice({
 
     setSingleProduct(state:InitialStateProducts,action:PayloadAction<IProducts>){
       state.product=action.payload
-    }
+    },
+    updateProduct(state, action: PayloadAction<IProducts>) {
+  const index = state.products.findIndex(
+    (item) => item.productId === action.payload.productId
+  );
+
+  if (index !== -1) {
+    state.products[index] = action.payload;
+  }
+}
   },
 });
 
-export const { setProducts, setStatus , setAdminProducts ,setResetStatusProduct , setSingleProduct } = adminProductSlice.actions;
+export const { setProducts, setStatus , setAdminProducts ,setResetStatusProduct , setSingleProduct, updateProduct } = adminProductSlice.actions;
 
 export default adminProductSlice.reducer;
 
@@ -129,6 +138,30 @@ export function adminSingleFetchProduct(id: string) {
         console.log("Error occured at fetchedAdminProducts", error);
         setStatus(Status.ERROR);
       }
+    }
+  };
+}
+
+
+export function editAdminProduct(id: string, data: FormData) {
+  return async function (dispatch: AppDispatch) {
+    try {
+      const response = await APIWITHTOKEN.put(
+        `/product/updateProduct/${id}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        dispatch(updateProduct(response.data.data));
+      }
+    } catch (error) {
+      console.log(error);
+      dispatch(setStatus(Status.ERROR));
     }
   };
 }
