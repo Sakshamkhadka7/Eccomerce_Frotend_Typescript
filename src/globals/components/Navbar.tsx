@@ -23,9 +23,7 @@ function Navbar() {
 
   const logout = async () => {
     try {
-      const response = await APIWITHTOKEN.post("/auth/logout", {
-        method: "POST",
-      });
+      const response = await APIWITHTOKEN.post("/auth/logout");
 
       if (response.status === 200) {
         localStorage.removeItem("token");

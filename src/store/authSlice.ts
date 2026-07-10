@@ -43,8 +43,8 @@ const authSlice = createSlice({
     setStatus(state: IAuthState, action: PayloadAction<Status>) {
       state.status = action.payload;
     },
-    setToken(state: IAuthState, action: PayloadAction<IUser>) {
-      state.user = action.payload;
+   setToken(state: IAuthState, action: PayloadAction<string>) {
+      state.user.token = action.payload;
     },
     userLogout(state) {
       state.user = {
@@ -93,18 +93,22 @@ export function loginUser(data: ILogin) {
       console.log(response.data.data, " : User loggined data");
       if (response.status === 200) {
         dispatch(setStatus(Status.SUCCESS));
+        console.log("Role : ",response.data.data.role);
+        console.log("Token : ", response.data.token);
 
         if (response.data.token) {
           localStorage.setItem("token", response.data.token);
+          dispatch( setToken(response.data.token))
           dispatch(
-            setToken({
-              username: response.data.user.username,
-              email: response.data.user.email,
+            setUser({
+              username: response.data.data.username,
+              email: response.data.data.email,
               password: null,
               token: response.data.token,
-              role: response.data.user.role,
+              role: response.data.data.role,  
             }),
           );
+          return response.data.data;
         } else {
           dispatch(setStatus(Status.ERROR));
         }
@@ -183,9 +187,10 @@ export function resetPassword(data: {
 
 export function getMe() {
   return async function getMeThunk(dispatch: AppDispatch) {
+    dispatch(setStatus(Status.LOADING));
     try {
       const response = await APIWITHTOKEN.get("/auth/getme");
-
+       console.log("Get me response data :",response.data.data);
       if (response.status === 200) {
         dispatch(
           setUser({
@@ -194,11 +199,17 @@ export function getMe() {
             password: null,
             token: localStorage.getItem("token"),
             role: response.data.data.role,
-          })
+          }),
         );
+        dispatch(setStatus(Status.SUCCESS));
+      } else {
+        localStorage.removeItem("token");
+        dispatch(setStatus(Status.ERROR));
       }
     } catch (error) {
       console.log("Error occurred at getMe", error);
+      localStorage.removeItem("token");
+      dispatch(setStatus(Status.ERROR));
     }
   };
 }

@@ -18,6 +18,11 @@ const initialState: ICategorries = {
   status: Status.LOADING,
 };
 
+interface IEditCategory{
+   categoryId?: string;
+  categoryName: string;
+}
+
 const categoriesSlice = createSlice({
   name: "categories",
   initialState,
@@ -93,6 +98,7 @@ export function fetchCategories() {
 }
 
 export function handleCategoriesDelete(productId: string) {
+  
   return async function handleCategoriesThunk(dispatch: AppDispatch) {
     try {
       const response = await APIWITHTOKEN.delete(
@@ -109,4 +115,15 @@ export function handleCategoriesDelete(productId: string) {
       dispatch(setStatus(Status.ERROR));
     }
   };
+}
+
+export function editCategories(id:string,data){
+  return async function editCategoriesThunk(dispatch : AppDispatch){
+    try {
+       
+      const response=await APIWITHTOKEN.put(`/category/updateCategory/${id}`,data)
+    } catch (error) {
+       console.log("Error occured at a=edit categories", error);
+    }
+  }
 }

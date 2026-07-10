@@ -22,8 +22,9 @@ import { io } from "socket.io-client";
 import ProtectedRoute from "./ProtectedRoute";
 import VerifyKhaltipidx from "./pages/checkout/VerifyKhaltipidx";
 import { useAppDispatch } from "./store/hook";
-import { getMe } from "./store/authSlice";
+import { getMe, setStatus } from "./store/authSlice";
 import AdminRoute from "./AdminRoute";
+import { Status } from "./globals/types/type";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -41,7 +42,9 @@ const App = () => {
     const token = localStorage.getItem("token");
 
     if (token) {
-      dispatch(getMe());
+      dispatch(getMe());  
+    }else{
+      dispatch(setStatus(Status.SUCCESS))
     }
   }, [dispatch]);
   return (

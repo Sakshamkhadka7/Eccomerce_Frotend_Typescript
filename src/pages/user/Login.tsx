@@ -1,6 +1,6 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { loginUser } from "../../store/authSlice";
+import { getMe, loginUser } from "../../store/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 import { Status } from "../../globals/types/type";
 
@@ -25,19 +25,25 @@ const Login = () => {
     }));
   };
 
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit =async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log(users);
-    dispatch(loginUser(users));
+  const result=await  dispatch(loginUser(users));
+   await dispatch(getMe())
   
-  };
-  
+  }
+useEffect(() => {
+    if (status === Status.SUCCESS && user.token) {
 
-  useEffect(()=>{
-    if(status===Status.SUCCESS){
-      navigate("/products");
+        if(user.role==="admin"){
+            navigate("/admin");
+        }else{
+            navigate("/products");
+        }
+
     }
-  },[status])
+
+},[status,user])
 
   return (
     <div className="w-screen min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
