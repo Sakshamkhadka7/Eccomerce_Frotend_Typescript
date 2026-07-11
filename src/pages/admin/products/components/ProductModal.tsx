@@ -1,13 +1,18 @@
 import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { useAppDispatch, useAppSelector } from "../../../../store/hook";
 import { Status } from "../../../../globals/types/type";
+import { fetchCategories } from "../../../../store/adminCategoriesSlice";
 import {
-  fetchCategories,
-} from "../../../../store/adminCategoriesSlice";
-import { addAdminProducts, setResetStatusProduct } from "../../../../store/adminProductSlice";
+  addAdminProducts,
+  editAdminProduct,
+  setResetStatusProduct,
+  type IProducts,
+} from "../../../../store/adminProductSlice";
 
 interface ModalProps {
   closeModal: () => void;
+  mode?: "add" | "edit";
+  product?: IProducts | null;
 }
 
 export interface IAdminProducts {
@@ -18,51 +23,76 @@ export interface IAdminProducts {
   productTotalStock: number;
   productDiscount: number;
   categoryId: string;
-  productImage: string;
-
+  productImage: string | File;
 }
 
-const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
-  const [data, setData] = useState<IAdminProducts>({
-    productName: "",
-    productDescriptions: "",
-    productPrice: 0,
-    productTotalStock: 0,
-    productDiscount: 0,
-    categoryId: "",
-    productImage: "",
-  });
+const getInitialProductState = (product?: IProducts | null): IAdminProducts => ({
+  productId: product?.productId,
+  productName: product?.productName ?? "",
+  productDescriptions: product?.productDescriptions ?? "",
+  productPrice: product?.productPrice ?? 0,
+  productTotalStock: product?.productTotalStock ?? 0,
+  productDiscount: product?.productDiscount ?? 0,
+  categoryId: "",
+  productImage: "",
+});
+
+const ProductModal: React.FC<ModalProps> = ({ closeModal, mode = "add", product }: ModalProps) => {
+  const [data, setData] = useState<IAdminProducts>(getInitialProductState(product));
+  const { status } = useAppSelector((store) => store.adminProducts);
+  const { items } = useAppSelector((store) => store.categories);
+  const dispatch = useAppDispatch();
+  const [loading, setLoading] = useState(false);
+  const isEditing = mode === "edit";
+
+  useEffect(() => {
+    setData(getInitialProductState(product));
+  }, [product, mode]);
+
+  useEffect(() => {
+    dispatch(fetchCategories());
+  }, [dispatch]);
 
   const handleChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
-    setData({
-      ...data,
-      [name]: name == "productImage" ? e.target.files[0] : value,
-    });
+    const numericFields = ["productPrice", "productTotalStock", "productDiscount"];
+    const nextValue = name === "productImage"
+      ? (e.target as HTMLInputElement).files?.[0] ?? ""
+      : numericFields.includes(name)
+        ? Number(value)
+        : value;
+
+    setData((prev) => ({ ...prev, [name]: nextValue }));
   };
-
-  const { status } = useAppSelector((store) => store.adminProducts);
-
-  const dispatch = useAppDispatch();
-  const [loading, setLoading] = useState(false);
-
-  const { items } = useAppSelector((store) => store.categories);
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
 
     try {
-      dispatch(addAdminProducts(data));
-    } catch (error) {
-      console.log("Error occured at handle submit", error);
-    }
-  };
+      const formData = new FormData();
+      formData.append("productName", data.productName);
+      formData.append("productDescriptions", data.productDescriptions);
+      formData.append("productPrice", String(data.productPrice));
+      formData.append("productTotalStock", String(data.productTotalStock));
+      formData.append("productDiscount", String(data.productDiscount));
+      formData.append("categoryId", data.categoryId);
 
-  const fetchCategoriesForProduct = () => {
-    dispatch(fetchCategories());
+      if (data.productImage instanceof File) {
+        formData.append("productImage", data.productImage);
+      }
+
+      if (isEditing && product?.productId) {
+        dispatch(editAdminProduct(product.productId, formData));
+      } else {
+        dispatch(addAdminProducts(formData));
+      }
+    } catch (error) {
+      console.log("Error occurred at handle submit", error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -71,7 +101,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       closeModal();
       dispatch(setResetStatusProduct());
     }
-  }, [status]);
+  }, [closeModal, dispatch, status]);
 
   return (
     <div
@@ -82,7 +112,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
       <div className="relative w-full max-w-md p-6 bg-white dark:bg-gray-800 rounded-lg shadow-xl">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            Add Category
+            {isEditing ? "Edit Product" : "Add Product"}
           </h3>
           <button
             onClick={closeModal}
@@ -111,7 +141,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
           <form onSubmit={handleSubmit}>
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-name"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Name
@@ -120,7 +150,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 name="productName"
                 onChange={handleChange}
                 type="text"
-                id="website_url"
+                id="product-name"
+                value={data.productName}
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Clothes ..."
                 required
@@ -129,7 +160,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-price"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Price
@@ -138,7 +169,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 name="productPrice"
                 onChange={handleChange}
                 type="number"
-                id="website_url"
+                id="product-price"
+                value={data.productPrice}
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="12000"
                 required
@@ -147,7 +179,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-stock"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Stock
@@ -156,7 +188,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 name="productTotalStock"
                 onChange={handleChange}
                 type="number"
-                id="website_url"
+                id="product-stock"
+                value={data.productTotalStock}
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="29"
                 required
@@ -165,7 +198,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-description"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Descriptions
@@ -173,7 +206,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
               <textarea
                 name="productDescriptions"
                 onChange={handleChange}
-                id="website_url"
+                id="product-description"
+                value={data.productDescriptions}
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="Details descriptions ..."
                 required
@@ -182,7 +216,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-discount"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Discount
@@ -191,7 +225,8 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 name="productDiscount"
                 onChange={handleChange}
                 type="number"
-                id="website_url"
+                id="product-discount"
+                value={data.productDiscount}
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
                 placeholder="999"
                 required
@@ -200,7 +235,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div>
               <label
-                htmlFor="website_url"
+                htmlFor="product-image"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
                 Product Image
@@ -209,9 +244,9 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 name="productImage"
                 onChange={handleChange}
                 type="file"
-                id="website_url"
+                id="product-image"
                 className="w-full mt-1 p-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500"
-                required
+                required={!isEditing}
               />
             </div>
             <div>
@@ -225,11 +260,10 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 onChange={handleChange}
                 name="categoryId"
                 id="product-category"
-                onClick={fetchCategoriesForProduct} // Handles the actual selection change
+                value={data.categoryId}
                 className="w-[200px]"
               >
-                <option value="">Select a category</option>{" "}
-                {/* Good UX fallback option */}
+                <option value="">Select a category</option>
                 {items.length > 0 &&
                   items.map((item) => (
                     <option value={item.categoryId} key={item.categoryId}>
@@ -241,6 +275,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
 
             <div className="flex justify-end gap-3">
               <button
+                type="button"
                 onClick={closeModal}
                 id="cancelButton"
                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-600 dark:hover:bg-gray-600"
@@ -253,7 +288,7 @@ const ProductModal: React.FC<ModalProps> = ({ closeModal }: ModalProps) => {
                 className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white rounded-md bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-700 hover:to-violet-700 dark:from-indigo-500 dark:to-violet-500 dark:hover:from-indigo-600 dark:hover:to-violet-600"
                 disabled={loading}
               >
-                {loading ? "Adding ......" : "Add"}
+                {loading ? (isEditing ? "Saving......" : "Adding......") : isEditing ? "Save" : "Add"}
                 <svg
                   className="h-4 w-4 inline-block ml-2"
                   xmlns="http://www.w3.org/2000/svg"

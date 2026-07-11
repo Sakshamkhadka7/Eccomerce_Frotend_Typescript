@@ -87,10 +87,31 @@ export function fetchProducts() {
   };
 }
 
-export function addAdminProducts(data: IAdminProducts) {
+const buildProductFormData = (data: IAdminProducts | FormData) => {
+  if (data instanceof FormData) {
+    return data;
+  }
+
+  const formData = new FormData();
+  formData.append("productName", data.productName);
+  formData.append("productDescriptions", data.productDescriptions);
+  formData.append("productPrice", String(data.productPrice));
+  formData.append("productTotalStock", String(data.productTotalStock));
+  formData.append("productDiscount", String(data.productDiscount));
+  formData.append("categoryId", data.categoryId);
+
+  if (data.productImage instanceof File) {
+    formData.append("productImage", data.productImage);
+  }
+
+  return formData;
+};
+
+export function addAdminProducts(data: IAdminProducts | FormData) {
   return async function addAdminProductsThunk(dispatch: AppDispatch) {
     try {
-      const response = await APIWITHTOKEN.post("/product/addProduct/", data, {
+      const formData = buildProductFormData(data);
+      const response = await APIWITHTOKEN.post("/product/addProduct/", formData, {
         method: "POST",
         headers: {
           "Content-Type": "multipart/form-data",
@@ -143,12 +164,13 @@ export function adminSingleFetchProduct(id: string) {
 }
 
 
-export function editAdminProduct(id: string, data: FormData) {
+export function editAdminProduct(id: string, data: IAdminProducts | FormData) {
   return async function (dispatch: AppDispatch) {
     try {
+      const formData = buildProductFormData(data);
       const response = await APIWITHTOKEN.put(
         `/product/updateProduct/${id}`,
-        data,
+        formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
@@ -158,6 +180,7 @@ export function editAdminProduct(id: string, data: FormData) {
 
       if (response.status === 200) {
         dispatch(updateProduct(response.data.data));
+        dispatch(setStatus(Status.SUCCESS));
       }
     } catch (error) {
       console.log(error);
