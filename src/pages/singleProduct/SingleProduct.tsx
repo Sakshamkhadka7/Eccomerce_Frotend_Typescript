@@ -24,76 +24,171 @@ const SingleProduct = () => {
     }
   };
 
-  return (
-    <div className="bg-gray-100 dark:bg-gray-800 py-8">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row -mx-4">
-          <div className="md:flex-1 px-4">
-            <div className="h-[460px] rounded-lg bg-gray-300 dark:bg-gray-700 mb-4">
-              <img
-                className="w-full h-full object-cover"
-                src={`http://localhost:3000/${product?.productImage}`}
-                alt="Product Image"
-              />
-            </div>
-            <div className="flex -mx-2 mb-4">
-              <div className="w-1/2 px-2">
-                <button
-                  onClick={handleAddToCart}
-                  className="w-full bg-gray-900 dark:bg-gray-600 text-white py-2 px-4 rounded-full font-bold hover:bg-gray-800 dark:hover:bg-gray-700"
-                >
-                  Add to Cart
-                </button>
-              </div>
-              <div className="w-1/2 px-2">
-                <button className="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-white py-2 px-4 rounded-full font-bold hover:bg-gray-300 dark:hover:bg-gray-600">
-                  Add to Wishlist
-                </button>
-              </div>
-            </div>
+return (
+  <div className="bg-gradient-to-b from-pink-50 to-white py-16">
+    <div className="container mx-auto px-6 lg:px-10">
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
+
+        {/* LEFT */}
+        <div>
+
+          <div className="relative overflow-hidden rounded-3xl bg-white shadow-xl border">
+
+            {product?.productDiscount > 0 && (
+              <span className="absolute top-5 left-5 z-10 rounded-full bg-pink-600 px-4 py-2 text-sm font-semibold text-white">
+                {product.productDiscount}% OFF
+              </span>
+            )}
+
+            <img
+              src={`http://localhost:3000/${product?.productImage}`}
+              alt={product?.productName}
+              className="w-full h-[650px] object-cover transition duration-500 hover:scale-105"
+            />
+
           </div>
-          <div className="md:flex-1 px-4">
-            <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
-              {product?.productName}
+
+        </div>
+
+        {/* RIGHT */}
+        <div className="flex flex-col justify-center">
+
+          <span className="w-fit rounded-full bg-pink-100 px-4 py-2 text-sm font-semibold text-pink-600">
+            {product?.Category?.categoryName}
+          </span>
+
+          <h1 className="mt-5 text-4xl lg:text-5xl font-bold text-gray-900">
+            {product?.productName}
+          </h1>
+
+          <div className="mt-5 flex items-center gap-3">
+
+            <span className="text-yellow-500 text-lg">
+              ⭐⭐⭐⭐⭐
+            </span>
+
+            <span className="text-gray-500">
+              (4.9 Reviews)
+            </span>
+
+          </div>
+
+          {/* Price */}
+          <div className="mt-8 flex items-center gap-4">
+
+            <h2 className="text-4xl font-bold text-pink-600">
+              Rs. {product?.productPrice}
             </h2>
-            <p className="text-gray-600 dark:text-gray-300 text-sm mb-4">
+
+            {product?.productDiscount! > 0 && (
+              <span className="rounded-full bg-pink-100 px-3 py-1 text-sm font-semibold text-pink-600">
+                {product?.productDiscount}% OFF
+              </span>
+            )}
+
+          </div>
+
+          {/* Stock */}
+          <div className="mt-6">
+
+            {product?.productTotalStock! > 0 ? (
+              <span className="rounded-full bg-green-100 px-4 py-2 text-green-700 font-semibold">
+                In Stock ({product?.productTotalStock} Available)
+              </span>
+            ) : (
+              <span className="rounded-full bg-red-100 px-4 py-2 text-red-600 font-semibold">
+                Out of Stock
+              </span>
+            )}
+
+          </div>
+
+          {/* Description */}
+          <div className="mt-10">
+
+            <h3 className="text-xl font-semibold text-gray-900">
+              Product Description
+            </h3>
+
+            <p className="mt-4 leading-8 text-gray-600">
               {product?.productDescriptions}
             </p>
-            <div className="flex mb-4">
-              <div className="mr-4">
-                <span className="font-bold text-gray-700 dark:text-gray-300">
-                  Price: {product?.productPrice}
-                </span>
-                <span className="text-gray-600 dark:text-gray-300">$29.99</span>
-              </div>
-              <div>
-                <span className="font-bold text-gray-700 dark:text-gray-300">
-                  Availability Stock:
-                </span>
-                <span className="text-gray-600 dark:text-gray-300">
-                  {product?.productTotalStock}
-                </span>
-              </div>
-            </div>
-            <div className="mb-4">
-              <span className="font-bold text-gray-700 dark:text-gray-300">
-                Category : {product?.Category.categoryName}
-              </span>
-            </div>
 
-            <div>
-              <span className="font-bold text-gray-700 dark:text-gray-300">
-                Product Description:
-              </span>
-              <p className="text-gray-600 dark:text-gray-300 text-sm mt-2">
-                {product?.productDescriptions}
+          </div>
+
+          {/* Features */}
+
+          <div className="mt-10 grid grid-cols-2 gap-5">
+
+            <div className="rounded-xl border p-5">
+              <h4 className="font-semibold">
+                🚚 Fast Delivery
+              </h4>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Delivery within 2–5 business days.
               </p>
             </div>
+
+            <div className="rounded-xl border p-5">
+              <h4 className="font-semibold">
+                🔄 Easy Returns
+              </h4>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Hassle-free 7-day return policy.
+              </p>
+            </div>
+
+            <div className="rounded-xl border p-5">
+              <h4 className="font-semibold">
+                💎 Premium Quality
+              </h4>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Carefully selected quality accessories.
+              </p>
+            </div>
+
+            <div className="rounded-xl border p-5">
+              <h4 className="font-semibold">
+                🔒 Secure Shopping
+              </h4>
+
+              <p className="mt-2 text-sm text-gray-500">
+                Safe and secure checkout experience.
+              </p>
+            </div>
+
           </div>
+
+          {/* Buttons */}
+
+          <div className="mt-12 flex flex-col sm:flex-row gap-5">
+
+            <button
+              onClick={handleAddToCart}
+              className="flex-1 rounded-xl bg-pink-600 py-4 text-lg font-semibold text-white hover:bg-pink-700 transition"
+            >
+              Add To Cart
+            </button>
+
+            <button
+              className="flex-1 rounded-xl border-2 border-pink-600 py-4 text-lg font-semibold text-pink-600 hover:bg-pink-600 hover:text-white transition"
+            >
+              Buy Now
+            </button>
+
+          </div>
+
         </div>
+
       </div>
+
     </div>
-  );
+  </div>
+);
 };
 
 export default SingleProduct;
