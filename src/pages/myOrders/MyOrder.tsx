@@ -1,150 +1,214 @@
 import { useEffect, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../../store/hook";
-import { fetchMyOrders, updateOrderStatusInSlice } from "../../store/checkoutSlice";
 import { Link } from "react-router-dom";
 import { socket } from "../../App";
+import { useAppDispatch, useAppSelector } from "../../store/hook";
+import {
+  fetchMyOrders,
+  updateOrderStatusInSlice,
+} from "../../store/checkoutSlice";
+import { Status } from "../../globals/types/type";
+import { OrderStaus } from "./type";
 
 const MyOrder = () => {
-  const { items } = useAppSelector((store) => store.orders);
+  const { items, status } = useAppSelector((store) => store.orders);
+
   const dispatch = useAppDispatch();
-  const [search,setSearch]=useState<string>("");
-  
 
-useEffect(() => {
-  const handleStatusUpdate = (data: any) => {
-    dispatch(updateOrderStatusInSlice(data));
+  const [search, setSearch] = useState("");
+
+  useEffect(() => {
+    const handleStatusUpdate = (data: any) => {
+      dispatch(updateOrderStatusInSlice(data));
+    };
+
+    socket.on("statusUpdate", handleStatusUpdate);
+
+    return () => {
+      socket.off("statusUpdate", handleStatusUpdate);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(fetchMyOrders());
+  }, [dispatch]);
+
+  const filterItem = Array.isArray(items)
+    ? items.filter((item) => {
+        return (
+          item?.Table?.paymentStatus
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          item?.Table?.paymentMethod
+            ?.toLowerCase()
+            .includes(search.toLowerCase()) ||
+          item?.orderStaus?.toLowerCase().includes(search.toLowerCase())
+        );
+      })
+    : [];
+
+  const getStatusClass = (status: string | undefined) => {
+    switch (status) {
+      case OrderStaus.Delivered:
+        return "bg-green-100 text-green-700";
+
+      case OrderStaus.Prepration:
+        return "bg-blue-100 text-blue-700";
+
+      case OrderStaus.OntheWay:
+        return "bg-purple-100 text-purple-700";
+
+      case OrderStaus.Cancelled:
+        return "bg-red-100 text-red-700";
+
+      default:
+        return "bg-yellow-100 text-yellow-700";
+    }
   };
-
-  socket.on("statusUpdate", handleStatusUpdate);
-
-  return () => {
-    socket.off("statusUpdate", handleStatusUpdate);
-  };
-}, [dispatch]);
-
-useEffect(() => {
-  dispatch(fetchMyOrders());
-}, [dispatch]);
-
-   const filterItem = Array.isArray(items)
-  ? items.filter((item) => {
-      return (
-        item?.Table?.paymentStatus
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ||
-
-        item?.Table?.paymentMethod
-          ?.toLowerCase()
-          .includes(search.toLowerCase()) ||
-
-        item?.orderStaus
-          ?.toLowerCase()
-          .includes(search.toLowerCase())
-      );
-    })
-  : [];
 
   return (
-    <div>
-      <div className="w-full flex justify-between items-center mb-3 mt-1 pl-3">
-        <div>
-          <h3 className="text-lg font-semibold text-slate-800">
-            Shopping Cart
-          </h3>
-          <p className="text-slate-500">Review your selected items.</p>
-        </div>
-        <div className="mx-3">
-          <div className="w-full max-w-sm min-w-[200px] relative">
-            <div className="relative">
+    <div className="min-h-screen bg-slate-100 py-8">
+      <div className="max-w-7xl mx-auto px-4">
+        {/* Header */}
+
+        <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+          <div className="flex flex-col md:flex-row justify-between gap-5">
+            <div>
+              <h1 className="text-3xl font-bold text-slate-800">My Orders</h1>
+
+              <p className="text-slate-500 mt-2">
+                View and track all your placed orders.
+              </p>
+            </div>
+
+            <div className="relative w-full md:w-80">
               <input
-               onChange={(e)=> setSearch(e.target.value)}
-                className="bg-white w-full pr-11 h-10 pl-3 py-2 bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded transition duration-300 ease focus:outline-none focus:border-slate-400 hover:border-slate-400 shadow-sm focus:shadow-md"
-                placeholder="Search for product..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search..."
+                className="w-full rounded-lg border border-slate-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-pink-500"
               />
-              <button
-                className="absolute h-8 w-8 right-1 top-1 my-auto px-2 flex items-center bg-white rounded "
-                type="button"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={3}
-                  stroke="currentColor"
-                  className="w-8 h-8 text-slate-600"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
-                  />
-                </svg>
-              </button>
             </div>
           </div>
         </div>
-      </div>
-      <div className="relative flex flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-lg bg-clip-border">
-        <table className="w-full text-left table-auto min-w-max">
-          <thead>
-            <tr className="border-b border-slate-300 bg-slate-50">
-              <th className="p-4 text-sm font-normal leading-none text-slate-500">
-                OrderId
-              </th>
-              <th className="p-4 text-sm font-normal leading-none text-slate-500">
-                Order Status
-              </th>
-              <th className="p-4 text-sm font-normal leading-none text-slate-500">
-                Total Amount
-              </th>
-              <th className="p-4 text-sm font-normal leading-none text-slate-500">
-                Payment Method
-              </th>
-              <th className="p-4 text-sm font-normal leading-none text-slate-500">
-                Payment Status
-              </th>
-              <th className="p-4 text-sm font-normal leading-none text-slate-500" />
-            </tr>
-          </thead>
-          <tbody>
-            {filterItem.length > 0 &&
-              filterItem?.map((item?) => {
-                return (
-                  <tr className="hover:bg-slate-50" key={item?.orderId}>
-                    <td className="p-4 border-b border-slate-200 py-5">
-                        <Link to={`/my-orders/${item?.orderId}`}>
-                         <p className="block font-semibold text-sm text-slate-800">
-                        {item?.orderId}
-                      </p>
+
+        {/* Summary */}
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-6">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <p className="text-slate-500">Total Orders</p>
+
+            <h2 className="text-3xl font-bold mt-2">{items.length}</h2>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <p className="text-slate-500">Delivered</p>
+
+            <h2 className="text-3xl font-bold text-green-600 mt-2">
+              {
+                items.filter((item) => item.orderStaus === OrderStaus.Delivered)
+                  .length
+              }
+            </h2>
+          </div>
+
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <p className="text-slate-500">Pending</p>
+
+            <h2 className="text-3xl font-bold text-yellow-600 mt-2">
+              {
+                items.filter((item) => item.orderStaus === OrderStaus.Pending)
+                  .length
+              }
+            </h2>
+          </div>
+        </div>
+
+        {/* Loading */}
+
+        {status === Status.LOADING ? (
+          <div className="bg-white rounded-xl p-10 text-center">
+            Loading orders...
+          </div>
+        ) : (
+          <div className="overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200">
+            <table className="w-full">
+              <thead className="bg-slate-100">
+                <tr>
+                  <th className="text-left px-6 py-4">Order ID</th>
+
+                  <th className="text-left px-6 py-4">Status</th>
+
+                  <th className="text-left px-6 py-4">Total</th>
+
+                  <th className="text-left px-6 py-4">Payment</th>
+
+                  <th className="text-left px-6 py-4">Payment Status</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {filterItem.length > 0 ? (
+                  filterItem.map((item) => (
+                    <tr
+                      key={item.orderId}
+                      className="border-b hover:bg-slate-50"
+                    >
+                      <td className="px-6 py-4">
+                        <Link
+                          to={`/my-orders/${item.orderId}`}
+                          className="text-pink-600 font-semibold hover:underline"
+                        >
+                          {item.orderId}
                         </Link>
-                     
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${getStatusClass(
+                            item.orderStaus,
+                          )}`}
+                        >
+                          {item.orderStaus}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4 font-medium text-slate-700">
+                        Rs. {Number(item.totalAmount).toLocaleString()}
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span className="bg-slate-100 px-3 py-1 rounded-full text-sm">
+                          {item.Table?.paymentMethod}
+                        </span>
+                      </td>
+
+                      <td className="px-6 py-4">
+                        <span
+                          className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                            item.Table?.paymentStatus?.toLowerCase() === "paid"
+                              ? "bg-green-100 text-green-700"
+                              : "bg-red-100 text-red-700"
+                          }`}
+                        >
+                          {item.Table?.paymentStatus}
+                        </span>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan={5}
+                      className="text-center py-16 text-slate-500"
+                    >
+                      No orders found.
                     </td>
-                    <td className="p-4 border-b border-slate-200 py-5">
-                      <p className="block font-semibold text-sm text-slate-800">
-                        {item?.orderStaus}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
-                        {item?.totalAmount}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
-                        {item?.Table?.paymentMethod}
-                      </p>
-                    </td>
-                    <td className="p-4 border-b border-slate-200 py-5">
-                      <p className="text-sm text-slate-500">
-                        {item?.Table?.paymentStatus}
-                      </p>
-                    </td>
-                  
                   </tr>
-                );
-              })}
-          </tbody>
-        </table>
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

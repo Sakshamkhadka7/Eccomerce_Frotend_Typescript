@@ -45,62 +45,194 @@ useEffect(() => {
 
 },[status,user])
 
-  return (
-    <div className="w-screen min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-800 px-4 sm:px-6 lg:px-8">
-      <div className="relative py-3 sm:max-w-xs sm:mx-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="min-h-96 px-8 py-6 mt-4 text-left bg-white dark:bg-gray-900  rounded-xl shadow-lg"
-        >
-          <div className="flex flex-col justify-center items-center h-full select-none">
-            <div className="flex flex-col items-center justify-center gap-2 mb-8">
-              <h1>Sign in {user?.username}</h1>
+ return (
+  <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 flex items-center justify-center py-12 px-6">
 
-              <p className="m-0 text-[16px] font-semibold dark:text-white">
-                Login to your Account
+    <div className="w-full max-w-6xl bg-white rounded-3xl shadow-2xl overflow-hidden grid lg:grid-cols-2">
+
+      {/* Left Section */}
+      <div className="hidden lg:flex flex-col justify-center bg-gradient-to-br from-pink-500 to-rose-500 text-white p-16 relative overflow-hidden">
+
+        <div className="absolute -top-16 -right-16 h-60 w-60 rounded-full bg-white/10"></div>
+        <div className="absolute bottom-0 left-0 h-72 w-72 rounded-full bg-white/5"></div>
+
+        <div className="relative z-10">
+
+          <span className="inline-block bg-white/20 px-5 py-2 rounded-full text-sm font-semibold">
+            ✨ Welcome to Glow Girl
+          </span>
+
+          <h1 className="mt-8 text-5xl font-bold leading-tight">
+            Fashion That
+            <br />
+            Makes You Shine
+          </h1>
+
+          <p className="mt-8 text-lg leading-8 text-pink-100">
+            Discover elegant earrings, necklaces, bracelets, handbags,
+            rings and premium accessories designed to complement your
+            unique personality. Shop confidently with high-quality
+            products and exceptional customer service.
+          </p>
+
+          <div className="mt-12 grid grid-cols-2 gap-6">
+
+            <div className="bg-white/10 rounded-2xl p-5 backdrop-blur">
+
+              <h2 className="text-3xl font-bold">
+                500+
+              </h2>
+
+              <p className="mt-2 text-pink-100">
+                Premium Accessories
               </p>
-              <span className="m-0 text-xs max-w-[90%] text-center text-[#8B8E98]">
-                Get started with our app, just start section and enjoy
-                experience.
-              </span>
+
             </div>
-            <div className="w-full flex flex-col gap-2">
-              <label className="font-semibold text-xs text-gray-400 ">
-                Email :{" "}
+
+            <div className="bg-white/10 rounded-2xl p-5 backdrop-blur">
+
+              <h2 className="text-3xl font-bold">
+                10K+
+              </h2>
+
+              <p className="mt-2 text-pink-100">
+                Happy Customers
+              </p>
+
+            </div>
+
+            <div className="bg-white/10 rounded-2xl p-5 backdrop-blur">
+
+              <h2 className="text-3xl font-bold">
+                4.9★
+              </h2>
+
+              <p className="mt-2 text-pink-100">
+                Customer Rating
+              </p>
+
+            </div>
+
+            <div className="bg-white/10 rounded-2xl p-5 backdrop-blur">
+
+              <h2 className="text-3xl font-bold">
+                24/7
+              </h2>
+
+              <p className="mt-2 text-pink-100">
+                Customer Support
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* Right Section */}
+
+      <div className="p-8 md:p-14 flex items-center">
+
+        <div className="w-full">
+
+          <div className="text-center">
+
+            <h2 className="text-4xl font-bold text-gray-900">
+              Welcome Back 👋
+            </h2>
+
+            <p className="mt-4 text-gray-500">
+              Login to continue shopping your favourite accessories.
+            </p>
+
+          </div>
+
+          <form
+            onSubmit={handleSubmit}
+            className="mt-10 space-y-6"
+          >
+
+            {/* Email */}
+
+            <div>
+
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Email Address
               </label>
+
               <input
-                onChange={handleChange}
                 type="email"
                 name="email"
-                className="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
-                placeholder="Email"
+                value={users.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+                className="w-full rounded-xl border border-gray-300 px-5 py-4 outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
               />
+
             </div>
-          </div>
-          <div className="w-full flex flex-col gap-2">
-            <label className="font-semibold text-xs text-gray-400 ">
-              Password
-            </label>
-            <input
-              type="password"
-              onChange={handleChange}
-              name="password"
-              className="border rounded-lg px-3 py-2 mb-5 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900"
-              placeholder="••••••••"
-            />
-          </div>
-          <div className="mt-5">
-            <button className="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none">
+
+            {/* Password */}
+
+            <div>
+
+              <label className="block text-sm font-semibold text-gray-700 mb-2">
+                Password
+              </label>
+
+              <input
+                type="password"
+                name="password"
+                value={users.password}
+                onChange={handleChange}
+                placeholder="Enter your password"
+                className="w-full rounded-xl border border-gray-300 px-5 py-4 outline-none transition focus:border-pink-500 focus:ring-4 focus:ring-pink-100"
+              />
+
+            </div>
+
+            <div className="flex justify-end">
+
+              <button
+                type="button"
+                className="text-sm text-pink-600 hover:text-pink-700"
+              >
+                Forgot Password?
+              </button>
+
+            </div>
+
+            <button
+              type="submit"
+              className="w-full rounded-xl bg-pink-600 py-4 text-lg font-semibold text-white transition hover:bg-pink-700"
+            >
               Login
             </button>
-          </div>
-          <p className="text-blue-500">
-            Wanna Login ? <Link to="/register">Go to Register</Link>{" "}
-          </p>
-        </form>
+
+            <p className="text-center text-gray-500">
+
+              Don't have an account?
+
+              <Link
+                to="/register"
+                className="ml-2 font-semibold text-pink-600 hover:text-pink-700"
+              >
+                Register
+              </Link>
+
+            </p>
+
+          </form>
+
+        </div>
+
       </div>
+
     </div>
-  );
+
+  </div>
+);
 };
 
 export default Login;

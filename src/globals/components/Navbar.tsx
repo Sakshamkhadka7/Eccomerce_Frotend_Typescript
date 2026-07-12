@@ -75,6 +75,13 @@ function Navbar() {
               Home
             </Link>
 
+              <Link
+              to="/about"
+              className="font-medium text-gray-700 hover:text-pink-600"
+            >
+              About
+            </Link>
+
             <Link
               to="/products"
               className="font-medium text-gray-700 hover:text-pink-600"

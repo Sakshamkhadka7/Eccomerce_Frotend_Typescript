@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import Register from "./pages/user/Register";
 import Login from "./pages/user/Login";
+import About from "./pages/user/About"
 import Home from "./pages/home/Home";
 import Product from "./pages/product/Product";
 import Navbar from "./globals/components/Navbar";
@@ -26,6 +27,7 @@ import { getMe, setStatus } from "./store/authSlice";
 import AdminRoute from "./AdminRoute";
 import { Status } from "./globals/types/type";
 import EditCategoryTable from "./pages/admin/categories/components/EditCategoryTable";
+import Footer from "./globals/components/Footer";
 
 export const socket = io("http://localhost:3000", {
   auth: {
@@ -44,8 +46,6 @@ const App = () => {
 
     if (token) {
       dispatch(getMe());  
-    }else{
-      dispatch(setStatus(Status.SUCCESS))
     }
   }, [dispatch]);
   return (
@@ -57,6 +57,7 @@ const App = () => {
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
         <Route path="/products" element={<Product />} />
+        <Route path="/about" element={<About/>} />
         <Route path="/products/:id" element={<SingleProduct />} />
         <Route
           path="/my-cart"
@@ -165,6 +166,7 @@ const App = () => {
           }
         />
       </Routes>
+      <Footer/>
     </>
   );
 };
