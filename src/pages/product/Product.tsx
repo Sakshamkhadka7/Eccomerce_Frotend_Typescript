@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hook";
 import { fetchProduct } from "../../store/productSlice";
 import Card from "./components/Card";
+import type { IProduct } from "./types/productType";
 
 const Product = () => {
-  
-  
+   
+  const [categoriesProducts,setCategoriesProducts]=useState<IProduct[]>([]);
+
   const dispatch=useAppDispatch();
 
   const {products}=useAppSelector((store)=> store.products)
@@ -17,7 +19,18 @@ const Product = () => {
     dispatch(fetchProduct())
   },[])
 
-  const filterProducts=
+  const filterProducts=(categories="Jhumka")=>{
+   const items=products.filter((item)=> item.Category.categoryName ===categories);
+   setCategoriesProducts(items) 
+  }
+
+  useEffect(()=>{
+    if(products.length > 0){
+       filterProducts()
+    }
+  },[products])
+
+  console.log("Filter categories products : ",categoriesProducts);
 
 
   return (
