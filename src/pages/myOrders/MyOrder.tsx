@@ -49,7 +49,7 @@ const MyOrder = () => {
   const getStatusClass = (status: string | undefined) => {
     switch (status) {
       case OrderStaus.Delivered:
-        return "bg-green-100 text-green-700";
+        return "bg-green-120 text-green-700";
 
       case OrderStaus.Prepration:
         return "bg-blue-100 text-blue-700";
